@@ -1,3 +1,6 @@
+cd(@__DIR__)
+Pkg.activate(".")
+
 using Rete
 using Documenter
 
