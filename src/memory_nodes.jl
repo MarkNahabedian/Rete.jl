@@ -1,7 +1,8 @@
 
 using OrderedCollections: OrderedSet
 
-export IsaMemoryNode
+export IsaMemoryNode, ensure_IsaMemoryNode
+
 
 function emit(node::AbstractMemoryNode,
               to::AbstractReteNode, fact)
@@ -46,5 +47,25 @@ function receive(node::IsaMemoryNode{T}, fact::T) where{T}
         emit(node, output, fact)
     end
     push!(node.memory, fact)
+end
+
+"""
+    ensure_IsaMemoryNode(root, typ::Type)::IsaTypeNode
+
+Find the IsaMemoryNode for the specified type, or add a new one.
+"""
+function ensure_IsaMemoryNode(root, typ::Type)::IsaMemoryNode
+    for o in root.outputs
+        if o isa IsaMemoryNode
+            if length(typeof(o).parameters) == 1
+                if typ == typeof(o).parameters[1]
+                    return o
+                end
+            end
+        end
+    end
+    n = IsaMemoryNode{typ}()
+    connect(root, n)
+    n
 end
 

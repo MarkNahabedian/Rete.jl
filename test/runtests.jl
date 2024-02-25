@@ -71,3 +71,11 @@ end
         Set{Tuple{Int, Int}}([
             (1, 2), (2, 3), (3, 4), (4, 5)])
 end
+
+@testset "ensure_IsaMemoryNode" begin
+    root = BasicReteNode("root")
+    n1 = ensure_IsaMemoryNode(root, Char)
+    @test n1 == ensure_IsaMemoryNode(root, Char)
+    @test length(root.outputs) == 1
+end
+
