@@ -20,9 +20,3 @@ function receive(node::BasicReteNode, fact)
     emit(node, fact)
 end
 
-function emit(node::BasicReteNode, fact)
-    for output in node.outputs
-        receive(output, fact)
-    end
-end
-

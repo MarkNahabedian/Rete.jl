@@ -54,6 +54,12 @@ Distribute's `fact` to each of `node`'s outputs by calling
 """
 function emit end
 
+function emit(node::AbstractReteNode, fact)
+    for output in node.outputs
+        receive(output, fact)
+    end
+end
+
 
 """
     receive(node, fact)
@@ -70,7 +76,7 @@ makes `to` an output of `from` and `from` an input of `to`.
 """
 function connect(from::AbstractReteNode, to::AbstractReteNode)
     push!(from.outputs, to)
-    push!(from.inputs, from)
+    push!(to.inputs, from)
     nothing
 end
 
