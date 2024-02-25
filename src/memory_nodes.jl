@@ -42,9 +42,9 @@ function receive(node::IsaMemoryNode{T}, fact::T) where{T}
     if fact in node.memory
         return
     end
-    push!(node.memory, fact)
     for output in node.outputs
         emit(node, output, fact)
     end
+    push!(node.memory, fact)
 end
 

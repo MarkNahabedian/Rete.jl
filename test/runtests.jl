@@ -36,8 +36,9 @@ end
                     end)
     connect_a(chars, join)
     connect_b(ints, join)
-    conclusions = IsaMemoryNode{String}()    
-    connect(join, conclusions)
+    conclusions = IsaMemoryNode{String}()
+    connect(root, conclusions)
+    connect(join, root)
     for c in 'a':'c'
         receive(root, c)
     end
@@ -53,7 +54,6 @@ end
     ints = IsaMemoryNode{Int}()
     join = JoinNode("join",
                     function(node, a, b)
-                        println("joining $a, $b")
                         if b == a + 1
                             emit(node, (a, b))
                         end
@@ -63,12 +63,10 @@ end
     connect(root, conclusions)
     connect_a(ints, join)
     connect_b(ints, join)
-    connect(join, conclusions)
+    connect(join, root)
     for i in 1:5
-        println("injecting $i")
         receive(root, i)
     end
-    println("conclusions: ", conclusions.memory)
     @test conclusions.memory ==
         Set{Tuple{Int, Int}}([
             (1, 2), (2, 3), (3, 4), (4, 5)])

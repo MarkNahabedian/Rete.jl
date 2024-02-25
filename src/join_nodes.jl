@@ -57,7 +57,8 @@ function receive(node::JoinNode, fact, from::AbstractMemoryNode)
                                   (i for i in node.b_inputs)))
             node.join_function(node, fact, b_fact)
         end
-    elseif from in node.b_inputs
+    end
+    if from in node.b_inputs
         for a_fact in flatten(map(input -> input.memory,
                                   # Because map isn't implemented for Set
                                   (i for i in node.a_inputs)))
