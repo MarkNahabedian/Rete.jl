@@ -1,4 +1,6 @@
 
+using OrderedCollections: OrderedSet
+
 export IsaMemoryNode
 
 function emit(node::AbstractMemoryNode,
@@ -19,7 +21,8 @@ specified type.  Facts of other types are ignored.
 struct IsaMemoryNode{T} <: AbstractMemoryNode
     inputs::Set{<:AbstractReteNode}
     outputs::Set{<:AbstractReteNode}
-    memory::Set{T}
+    # Prseserve insertion order for debugging:
+    memory::OrderedSet{T}
 
     IsaMemoryNode{T}() where {T} =
         new(Set{AbstractReteNode}(),
@@ -36,6 +39,9 @@ function receive(node::IsaMemoryNode, fact)
 end
 
 function receive(node::IsaMemoryNode{T}, fact::T) where{T}
+    if fact in node.memory
+        return
+    end
     push!(node.memory, fact)
     for output in node.outputs
         emit(node, output, fact)
