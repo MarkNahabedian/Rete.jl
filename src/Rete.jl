@@ -1,5 +1,7 @@
 module Rete
 
-# Write your package code here.
+include("node_abstraction.jl")
+include("basic_node.jl")
+include("memory_nodes.jl")
 
 end
