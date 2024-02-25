@@ -79,3 +79,5 @@ end
     @test length(root.outputs) == 1
 end
 
+include("rule_example_1.jl")
+
