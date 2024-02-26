@@ -49,12 +49,15 @@ function receive(node::IsaMemoryNode{T}, fact::T) where{T}
     push!(node.memory, fact)
 end
 
-"""
-    ensure_IsaMemoryNode(root, typ::Type)::IsaTypeNode
 
-Find the IsaMemoryNode for the specified type, or add a new one.
 """
-function ensure_IsaMemoryNode(root, typ::Type)::IsaMemoryNode
+    find_memory_for_type(root, typ::Type)::UnionPNothing, IsaTypeNode}
+
+If there's a memory node in the Rete represented by `root` that stores
+objects of the specified type then return it.  Otherwiaw return
+nothing.
+"""
+function find_memory_for_type(root, typ::Type)::Union{Nothing, IsaMemoryNode}
     for o in root.outputs
         if o isa IsaMemoryNode
             if length(typeof(o).parameters) == 1
@@ -63,6 +66,21 @@ function ensure_IsaMemoryNode(root, typ::Type)::IsaMemoryNode
                 end
             end
         end
+    end
+    return nothing
+end
+
+
+"""
+    ensure_IsaMemoryNode(root, typ::Type)::IsaTypeNode
+
+Find the IsaMemoryNode for the specified type, or make one and add it
+to the network.
+"""
+function ensure_IsaMemoryNode(root, typ::Type)::IsaMemoryNode
+    n = find_memory_for_type(root, typ)
+    if n !== nothing
+        return n
     end
     n = IsaMemoryNode{typ}()
     connect(root, n)
