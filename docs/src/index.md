@@ -50,6 +50,45 @@ A node distributes a *fact* to its outputs using its [`emit`](@ref)
 method, which calls [`receive`](@ref) for each of the node's outputs.
 
 
+## Rules
+
+The `@rule` macro makes it easier to create rules and add them
+to a Rete.
+
+As a contried exanple, lets create a network that creates pairs of
+letters when the second letter in the pair is the next letter of the
+alphabet from the first.
+
+```@example rule1
+using Rete
+
+@rule PairConectutiveLetters(a::Char, b::Char) begin
+    if codepoint(a) + 1 == codepoint(b)
+        emit(a * b)
+    end
+end
+```
+
+`@rule` will define a singleton type named `PairConectutiveLetters` to
+represent the rule.  It `@rule` defines an `install` method that will
+add the rule to a network.  The instance of `PairConectutiveLetters
+implements the join function of the JoinNode.
+
+
+```@example rule1
+root = BasicReteNode("root")
+install(root, PairConectutiveLetters())
+ensure_IsaMemoryNode(root, String) # to colect the output
+
+for c in 'a':'e'
+    receive(root, c)
+end
+
+collect(find_memory_for_type(root, String).memory)
+```
+
+
+
 ## Index
 
 ```@index

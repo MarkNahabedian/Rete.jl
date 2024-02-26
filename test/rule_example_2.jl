@@ -1,7 +1,7 @@
 
 @rule JoinSewquentialLetterDigram2(a::Char, b::Char) begin
     if codepoint(a) + 1 == codepoint(b)
-        emit( (a, b))
+        emit((a, b))
     end
 end
 

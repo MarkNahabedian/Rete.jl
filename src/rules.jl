@@ -8,6 +8,15 @@ Rule is an abstract supertype for all rules.
 """
 abstract type Rule end
 
+
+"""
+    @rule Rulename(a::A_Type, b::B_Type) begin ... end
+
+Defines a rule named `Rulename`.  A singleton type named `Rulename`
+will be defined to represent the rule.  An `install` method is defined
+which can be used to add the nodes necessary to implement the rule to
+a Rete.
+"""
 macro rule(call, body)
     if !isexpr(call, :call)
         error("The first expression of rule should look like a call")
