@@ -1,7 +1,7 @@
 
 using OrderedCollections: OrderedSet
 
-export IsaMemoryNode, ensure_IsaMemoryNode
+export IsaMemoryNode, find_memory_for_type, ensure_IsaMemoryNode
 
 
 function emit(node::AbstractMemoryNode,

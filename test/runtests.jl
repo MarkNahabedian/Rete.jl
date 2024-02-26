@@ -80,4 +80,5 @@ end
 end
 
 include("rule_example_1.jl")
+include("rule_example_2.jl")
 
