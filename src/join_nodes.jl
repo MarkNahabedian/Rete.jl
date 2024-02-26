@@ -38,11 +38,23 @@ end
 # asserted.  Adding inputs to a JoinNode doesn't cause existing facts
 # from those inputs to be processed.
 
+
+"""
+    connect_a(from::AbstractMemoryNode, to::JoinNode)
+
+Connect a memory node to the *a* input of a JoinNode.
+"""
 function connect_a(from::AbstractMemoryNode, to::JoinNode)
     push!(from.outputs, to)
     push!(to.a_inputs, from)
 end
 
+
+"""
+    connect_b(from::AbstractMemoryNode, to::JoinNode)
+
+Connect a memory node to the *b* input of a JoinNode.
+"""
 function connect_b(from::AbstractMemoryNode, to::JoinNode)
     push!(from.outputs, to)
     push!(to.b_inputs, from)
