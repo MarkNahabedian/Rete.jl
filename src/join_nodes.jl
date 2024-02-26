@@ -25,6 +25,9 @@ struct JoinNode <: AbstractReteJoinNode
             join_function)
 end
 
+label(n::JoinNode) = n.label
+
+
 # Maybe a JoinNode constructor that just takes the function as
 # argument and uses its argument signature and function name as
 # parameters
