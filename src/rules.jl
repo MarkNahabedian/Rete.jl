@@ -16,12 +16,24 @@ Defines a rule named `Rulename`.  A singleton type named `Rulename`
 will be defined to represent the rule.  An `install` method is defined
 which can be used to add the nodes necessary to implement the rule to
 a Rete.
+
+The default supertype of a rule struct is `Rule`.  When it is
+desirable to group rules together, one can define an abstract type
+that is a type descendant of Rule and use that as a dotted prefix to
+`RuleName`.  The the `RuleName` in the @rule invocation is
+`MyGroup.MyRule` then the supertype of MyRule will be MyGroup, rather
+than Rule.
 """
 macro rule(call, body)
     if !isexpr(call, :call)
         error("The first expression of rule should look like a call")
     end
+    supertype = Rule
     rule_name = call.args[1]
+    if isexpr(rule_name, :(.))
+        supertype = rule_name.args[1]
+        rule_name = rule_name.args[2].value  # Unwrap QuoteNode
+    end
     rule_name_str = string(rule_name)
     @assert isexpr(call.args[2], :(::))
     @assert isexpr(call.args[3], :(::))
@@ -39,9 +51,9 @@ macro rule(call, body)
     end
     
     esc(quote
-        struct $rule_name <: Rule end
+        struct $rule_name <: $supertype end
 
-        function install(root::BasicReteNode, ::$rule_name)
+        function Rete.install(root::BasicReteNode, ::$rule_name)
             join = JoinNode($rule_name_str, $rule_name())
             connect_a(ensure_IsaMemoryNode(root, $a_type), join)
             connect_b(ensure_IsaMemoryNode(root, $b_type), join)
