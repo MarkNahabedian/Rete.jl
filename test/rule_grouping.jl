@@ -14,7 +14,7 @@ end
 
 @testset "rule grouping" begin
     root = BasicReteNode("root")
-    Rete.install(root, RuleGroup1)
+    install(root, RuleGroup1)
     conclusions = ensure_IsaMemoryNode(root, String)
     for c in 'a':'c'
         receive(root, c)

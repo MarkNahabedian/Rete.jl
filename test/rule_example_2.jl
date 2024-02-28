@@ -13,8 +13,8 @@ end
 
 @testset "rule example 2" begin
     root = BasicReteNode("root")
-    Rete.install(root, JoinSequentialLetterDigram2())
-    Rete.install(root, JoinSequentialLetterTrigram2())
+    install(root, JoinSequentialLetterDigram2())
+    install(root, JoinSequentialLetterTrigram2())
     conclusions = ensure_IsaMemoryNode(root, String)
     @test length(root.inputs) == 2
     @test length(root.outputs) == 3
