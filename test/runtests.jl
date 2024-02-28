@@ -45,7 +45,8 @@ end
     for i in 1:3
         receive(root, i)
     end
-    @test sort(collect(conclusions.memory)) == sort([
+    println(conclusions.memory)
+    @test conclusions.memory == Set{String}([
         "a1", "b1", "c1", "a2", "b2", "c2", "a3", "b3", "c3"])
 end
 

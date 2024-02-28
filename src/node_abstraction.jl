@@ -1,5 +1,6 @@
 export AbstractReteNode, AbstractMemoryNode, AbstractReteJoinNode
 export label, inputs, outputs, connect, emit, receive, install
+export askc
 
 
 """
@@ -98,3 +99,21 @@ function install(root::AbstractReteNode, rule_group)
         end
     end
 end
+
+
+"""
+    askc(continuation, node)
+
+Calls `continuation` on each *fact* available through `node`.
+"""
+function askc end
+
+
+function askc(continuation, s::Set{<:AbstractReteNode})
+    for input in s
+        askc(input) do fact
+            continuation(fact)
+        end
+    end
+end
+

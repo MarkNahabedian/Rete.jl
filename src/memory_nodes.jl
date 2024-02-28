@@ -50,6 +50,14 @@ function receive(node::IsaMemoryNode{T}, fact::T) where{T}
 end
 
 
+function askc(continuation, node::AbstractMemoryNode)
+    for fact in node.memory
+        continuation(fact)
+    end
+end
+
+
+
 """
     find_memory_for_type(root, typ::Type)::UnionPNothing, IsaTypeNode}
 

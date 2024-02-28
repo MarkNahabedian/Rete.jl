@@ -66,17 +66,12 @@ end
 
 function receive(node::JoinNode, fact, from::AbstractMemoryNode)
     if from in node.a_inputs
-        # We should probably use the set unions of the input memories.
-        for b_fact in flatten(map(input -> input.memory,
-                                  # Because map isn't implemented for Set
-                                  (i for i in node.b_inputs)))
+        askc(node.b_inputs) do b_fact
             node.join_function(node, fact, b_fact)
         end
     end
     if from in node.b_inputs
-        for a_fact in flatten(map(input -> input.memory,
-                                  # Because map isn't implemented for Set
-                                  (i for i in node.a_inputs)))
+        askc(node.a_inputs) do a_fact
             node.join_function(node, a_fact, fact)
         end
     end
