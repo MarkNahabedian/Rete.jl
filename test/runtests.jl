@@ -1,6 +1,15 @@
 using Rete
 using Test
 
+@testset "test collecting" begin
+    c = collecting() do c
+        for x in 1:4
+            c(x)
+        end
+    end
+    @test c == Vector{Any}(1:4)
+end
+
 @testset "Node connection test" begin
     n1 = BasicReteNode("node 1")
     n2 = BasicReteNode("node 2")
