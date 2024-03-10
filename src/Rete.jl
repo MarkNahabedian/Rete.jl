@@ -2,6 +2,7 @@ module Rete
 
 using InteractiveUtils
 
+include("utils.jl")
 include("node_abstraction.jl")
 include("basic_node.jl")
 include("memory_nodes.jl")
