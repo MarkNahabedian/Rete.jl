@@ -55,8 +55,8 @@ macro rule(call, body)
 
         function Rete.install(root::BasicReteNode, ::$rule_name)
             join = JoinNode($rule_name_str, $rule_name())
-            connect_a(ensure_IsaMemoryNode(root, $a_type), join)
-            connect_b(ensure_IsaMemoryNode(root, $b_type), join)
+            connect(ensure_IsaMemoryNode(root, $a_type), join, 1)
+            connect(ensure_IsaMemoryNode(root, $b_type), join, 2)
             connect(join, root)
         end
 

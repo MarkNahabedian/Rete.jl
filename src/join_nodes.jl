@@ -1,7 +1,7 @@
 
 using Base.Iterators: flatten
 
-export JoinNode, connect_a, connect_b
+export JoinNode
 
 """
 JoinNode implements a join operation between two streams of inputs A
@@ -33,34 +33,15 @@ label(n::JoinNode) = n.label
 # parameters
 # NO.  Functions don't have signatures, methods do.
 
-function connect(from::AbstractReteNode, to::JoinNode)
-    error("Use connect_a or connect_b to connect toa JoinNode")
-end
-
-# We assume that the network is fully constructed before any facts are
-# asserted.  Adding inputs to a JoinNode doesn't cause existing facts
-# from those inputs to be processed.
-
-
-"""
-    connect_a(from::AbstractMemoryNode, to::JoinNode)
-
-Connect a memory node to the *a* input of a JoinNode.
-"""
-function connect_a(from::AbstractMemoryNode, to::JoinNode)
+function connect(from::AbstractReteNode, to::JoinNode, input::Int)
+    @assert input >= 1
+    @assert input <= 2
     push!(from.outputs, to)
-    push!(to.a_inputs, from)
-end
-
-
-"""
-    connect_b(from::AbstractMemoryNode, to::JoinNode)
-
-Connect a memory node to the *b* input of a JoinNode.
-"""
-function connect_b(from::AbstractMemoryNode, to::JoinNode)
-    push!(from.outputs, to)
-    push!(to.b_inputs, from)
+    if input == 1
+        push!(to.a_inputs, from)
+    else
+        push!(to.b_inputs, from)
+    end
 end
 
 

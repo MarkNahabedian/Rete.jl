@@ -41,6 +41,10 @@ more than one of these roles.  One such example is
 [`IsaMemoryNode`](@ref), which filters *facts* that match a type
 parameter and remember only those *facts*.
 
+We assume that the network is fully constructed before any facts are
+asserted.  Adding inputs to a JoinNode doesn't cause existing facts
+from those inputs to be processed.
+
 
 ## Flow of Facts through the Network
 
