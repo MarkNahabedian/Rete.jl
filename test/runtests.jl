@@ -39,7 +39,7 @@ end
     ints = IsaMemoryNode{Int}()
     connect(root, chars)
     connect(root, ints)
-    join = JoinNode("join char int",
+    join = JoinNode("join char int", 2,
                     function(node, c, i)
                         emit(node, "$c$i")
                     end)
@@ -54,15 +54,17 @@ end
     for i in 1:3
         receive(root, i)
     end
-    println(conclusions.memory)
-    @test conclusions.memory == Set{String}([
-        "a1", "b1", "c1", "a2", "b2", "c2", "a3", "b3", "c3"])
+    results = collecting() do c
+        askc(c, conclusions)
+    end
+    @test sort(results) ==
+        sort(["a1", "b1", "c1", "a2", "b2", "c2", "a3", "b3", "c3"])
 end
 
 @testset "symetric join test" begin
     root = BasicReteNode("root")
     ints = IsaMemoryNode{Int}()
-    join = JoinNode("join",
+    join = JoinNode("join", 2,
                     function(node, a, b)
                         if b == a + 1
                             emit(node, (a, b))
@@ -77,9 +79,41 @@ end
     for i in 1:5
         receive(root, i)
     end
-    @test conclusions.memory ==
-        Set{Tuple{Int, Int}}([
-            (1, 2), (2, 3), (3, 4), (4, 5)])
+    results = collecting() do c
+        askc(c, conclusions)
+    end
+    @test sort(results) ==
+        sort([(1, 2), (2, 3), (3, 4), (4, 5)])
+end
+
+@testset "3-ary join" begin
+    root = BasicReteNode("root")
+    ints = IsaMemoryNode{Int}()
+    chars = IsaMemoryNode{Char}()
+    join = JoinNode("join", 3,
+                    function(node, a, b, c)
+                        if a != c
+                            emit(node, "$a$b$c")
+                        end
+                    end)
+    conclusions = IsaMemoryNode{String}()
+    connect(root, ints)
+    connect(root, chars)
+    connect(root, conclusions)
+    connect(ints, join, 1)
+    connect(chars, join, 2)
+    connect(ints, join, 3)
+    connect(join, root)
+    for i in 1:2
+        receive(root, i)
+    end
+    for c in 'a':'b'
+        receive(root, c)
+    end
+    results = collecting() do c
+        askc(c, conclusions)
+    end
+    @test sort(results) == sort(["1a2", "2a1", "1b2", "2b1"])
 end
 
 @testset "ensure_IsaMemoryNode" begin

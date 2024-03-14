@@ -1,5 +1,6 @@
 
 using Base.Iterators: flatten
+using IterTools: repeatedly
 
 export JoinNode
 
@@ -12,15 +13,14 @@ to assert.
 """
 struct JoinNode <: AbstractReteJoinNode
     label::String
-    a_inputs   # ::Set{AbstractMemoryNode{T1}}
-    b_inputs   # ::Set{AbstractMemoryNode{T2}}
+    inputs
     outputs::Set{AbstractReteNode}
     join_function
 
-    JoinNode(label::String, join_function) =
+    JoinNode(label::String, input_arity, join_function) =
         new(label,
-            Set{AbstractMemoryNode}(),
-            Set{AbstractMemoryNode}(),
+            Tuple(repeatedly(() -> Set{AbstractMemoryNode}(),
+                             input_arity)),
             Set{AbstractReteNode}(),
             join_function)
 end
@@ -35,26 +35,36 @@ label(n::JoinNode) = n.label
 
 function connect(from::AbstractReteNode, to::JoinNode, input::Int)
     @assert input >= 1
-    @assert input <= 2
+    @assert input <= length(to.inputs)
     push!(from.outputs, to)
-    if input == 1
-        push!(to.a_inputs, from)
-    else
-        push!(to.b_inputs, from)
-    end
+    push!(to.inputs[input], from)
 end
 
 
 function receive(node::JoinNode, fact, from::AbstractMemoryNode)
-    if from in node.a_inputs
-        askc(node.b_inputs) do b_fact
-            node.join_function(node, fact, b_fact)
+    args = Vector(undef, length(node.inputs))
+    last_from_pos = findlast(map(i -> from in i, node.inputs))
+    function helper(argnumber, hasfact)
+        if argnumber > length(args)
+            if hasfact
+                node.join_function(node, args...)
+            end
+        else
+            # Avoid computing more of the power set of arguments if
+            # we've not added fact and we've passed the last set of
+            # inputs that could contain from.
+            if !hasfact && argnumber > last_from_pos
+                return
+            end
+            for input in node.inputs[argnumber]
+                askc(input) do i_fact
+                    args[argnumber] = i_fact
+                    helper(argnumber + 1,
+                           hasfact || (i_fact == fact))
+                end
+            end
         end
     end
-    if from in node.b_inputs
-        askc(node.a_inputs) do a_fact
-            node.join_function(node, a_fact, fact)
-        end
-    end
+    helper(1, false)    
 end
 
