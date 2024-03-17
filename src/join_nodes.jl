@@ -5,11 +5,11 @@ using IterTools: repeatedly
 export JoinNode
 
 """
-JoinNode implements a join operation between two streams of inputs A
-abd B.  The first argiment of `join_function` is the JoinNode itself.
-The second comes from the A stream.  The third comes from the B
-stream.  `join_function` should call `emit` for each new fact it wants
-to assert.
+JoinNode implements a join operation between multiple streams of
+inputs.  The first argiment of `join_function` is the JoinNode itself.
+The remaining arguments come from the input streams of the join node.
+`join_function` should call `emit` for each new fact it wants to
+assert.
 """
 struct JoinNode <: AbstractReteJoinNode
     label::String
@@ -27,11 +27,6 @@ end
 
 label(n::JoinNode) = n.label
 
-
-# Maybe a JoinNode constructor that just takes the function as
-# argument and uses its argument signature and function name as
-# parameters
-# NO.  Functions don't have signatures, methods do.
 
 function connect(from::AbstractReteNode, to::JoinNode, input::Int)
     @assert input >= 1

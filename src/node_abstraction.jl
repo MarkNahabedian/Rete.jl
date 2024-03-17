@@ -66,6 +66,9 @@ end
     receive(node, fact)
 
 `receive` is how `node` is given a new *fact*.
+
+An application calls `receive` on the root node to assert a new fact
+to the network.
 """
 function receive end
 
@@ -74,6 +77,9 @@ function receive end
     connect(from, to)
 
 makes `to` an output of `from` and `from` an input of `to`.
+
+When `to` is a join node then a third parameter (a positive integer)
+identifies which parameter position `from` feed in to.
 """
 function connect(from::AbstractReteNode, to::AbstractReteNode)
     push!(from.outputs, to)
@@ -92,7 +98,7 @@ function install end
 
 function install(root::AbstractReteNode, rule_group)
     if isconcretetype(rule_group)
-        install(root, rule_group())
+        install(root, rule_group)
     else
         for r in subtypes(rule_group)
             install(root, r)
@@ -104,7 +110,7 @@ end
 """
     askc(continuation, node)
 
-Calls `continuation` on each *fact* available through `node`.
+Calls `continuation` on each *fact* available from `node`.
 """
 function askc end
 

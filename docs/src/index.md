@@ -6,6 +6,9 @@ CurrentModule = Rete
 
 Documentation for [Rete](https://github.com/MarkNahabedian/Rete.jl).
 
+In its current form, this package only supports forward chaining
+rules.
+
 
 ## Facts
 
@@ -30,13 +33,13 @@ some predicate or are instances of a certain type.
 
 Some nodes store *facts*.
 
-Join nodes have two input streams.  A function is applied to all
-possible combinations of facts coming in from the two streams.  The
-function can call [`emit`](@ref) to assert a new *fact* to the
-network.
+Join nodes have multiple distinct input streams.  A function is
+applied to all possible combinations of facts coming in from these
+streams.  The function can call [`emit`](@ref) to assert a new *fact*
+to the network.
 
 
-That's the theory.  In practice, its simpler if a given node performs
+srcThat's the theory.  In practice, its simpler if a given node performs
 more than one of these roles.  One such example is
 [`IsaMemoryNode`](@ref), which filters *facts* that match a type
 parameter and remember only those *facts*.
@@ -44,6 +47,16 @@ parameter and remember only those *facts*.
 We assume that the network is fully constructed before any facts are
 asserted.  Adding inputs to a JoinNode doesn't cause existing facts
 from those inputs to be processed.
+
+
+### Layers
+
+The network might best be constructed in layers.  A singgle root node
+forms the top layer.  It serves as the recipient of new facts.  It
+distributes those facts to the next layer, which consists of memory
+nodes.  A third layer consists of join nodes, typically defined by
+rules.  The join nodes might conclude new facts which they pass to the
+root node.
 
 
 ## Flow of Facts through the Network
@@ -56,7 +69,7 @@ method, which calls [`receive`](@ref) for each of the node's outputs.
 
 ## Rules
 
-The `@rule` macro makes it easier to create rules and add them
+The [`@rule`](@ref) macro makes it easier to create rules and add them
 to a Rete.
 
 As a contried exanple, lets create a network that creates pairs of
@@ -73,10 +86,10 @@ using Rete
 end
 ```
 
-`@rule` will define a singleton type named `PairConectutiveLetters` to
-represent the rule.  It `@rule` defines an `install` method that will
-add the rule to a network.  The instance of `PairConectutiveLetters
-implements the join function of the JoinNode.
+[`@rule`](@ref) will define a singleton type named
+`PairConectutiveLetters` to represent the rule.  `@rule` defines an
+`install` method that will add the rule to a network.  The instance of
+`PairConectutiveLetters` implements the join function of the JoinNode.
 
 
 ```@example rule1

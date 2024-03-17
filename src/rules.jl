@@ -13,18 +13,18 @@ abstract type Rule end
     @rule Rulename(a::A_Type, b::B_Type, ...) begin ... end
 
 Defines a rule named `Rulename`.  A singleton type named `Rulename`
-will be defined to represent the rule.  An `install` method is defined
-for that type which can be used to add the necessary nodes and
+will be defined to represent the rule.  An [`install`](@ref) method is
+defined for that type which can be used to add the necessary nodes and
 connections to a Rete to implement the rule.
 
 The default supertype of a rule struct is `Rule`.  When it is
 desirable to group rules together, one can define an abstract type
 that is a type descendant of Rule and use that as a dotted prefix to
-`RuleName`.  The the `RuleName` in the @rule invocation is
+`RuleName`.  The `RuleName` in the @rule invocation is
 `MyGroup.MyRule` then the supertype of MyRule will be MyGroup, rather
-than Rule.
+than [`Rule`](@ref).
 
-A rule an have arbitrarily many parameters.  The parameter list can
+A rule can have arbitrarily many parameters.  The parameter list can
 also include clauses with no variable name.  Such clauses identify the
 types of facts that the rule might assert.  Memory nodes for these
 types will be added to the Rete if not already present.
