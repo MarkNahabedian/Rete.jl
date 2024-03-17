@@ -1,4 +1,6 @@
 
+using DataStructures: SortedDict
+
 export collecting
 
 """
@@ -14,5 +16,20 @@ function collecting(body)
     end
     body(collect)
     results
+end
+
+
+"""
+    kb_counts(root)
+
+Returns a `Dict{Type, Int}` of the number of facts of each type.
+"""
+function kb_counts(root)
+    result = SortedDict{Type, Int}()
+    for node in root.outputs
+        @assert node isa IsaMemoryNode
+        result[typeof(node).parameters[1]] = length(node.memory)
+    end
+    result
 end
 
