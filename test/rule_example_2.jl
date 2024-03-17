@@ -14,9 +14,9 @@ end
 end
 
 @testset "rule example 2" begin
-    root = BasicReteNode("root")
-    install(root, JoinSequentialLetterDigram2())
-    install(root, JoinSequentialLetterTrigram2())
+    root = ReteRootNode("root")
+    install(root, JoinSequentialLetterDigram2)
+    install(root, JoinSequentialLetterTrigram2)
     conclusions = find_memory_for_type(root, String)
     @test length(root.inputs) == 2
     @test length(root.outputs) == 3

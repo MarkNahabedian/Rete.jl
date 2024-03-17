@@ -15,7 +15,7 @@ end
 end
 
 @testset "rule grouping" begin
-    root = BasicReteNode("root")
+    root = ReteRootNode("root")
     install(root, RuleGroup1)
     conclusions = find_memory_for_type(root, String)
     for c in 'a':'c'

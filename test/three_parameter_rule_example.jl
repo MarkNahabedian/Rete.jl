@@ -6,7 +6,7 @@
 end
 
 @testset "three input rule" begin
-    root = BasicReteNode("root")
+    root = ReteRootNode("root")
     install(root, ThreeInputRule)
     conclusions = find_memory_for_type(root, String)
     for c in 'a':'c'

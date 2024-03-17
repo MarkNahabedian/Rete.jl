@@ -75,7 +75,7 @@ macro rule(call, body)
     esc(quote
         struct $rule_name <: $supertype end
 
-        function Rete.install(root::BasicReteNode, ::$rule_name)
+        function Rete.install(root::ReteRootNode, ::$rule_name)
             join = JoinNode($rule_name_str,
                             $(length(input_exprs)),
                             $rule_name())

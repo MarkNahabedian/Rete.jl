@@ -11,8 +11,8 @@ using Test
 end
 
 @testset "Node connection test" begin
-    n1 = BasicReteNode("node 1")
-    n2 = BasicReteNode("node 2")
+    n1 = ReteRootNode("node 1")
+    n2 = ReteRootNode("node 2")
     connect(n1, n2)
     @test n1.inputs == Set()
     @test n1.outputs == Set([n2])
@@ -21,7 +21,7 @@ end
 end
 
 @testset "Simple memory test" begin
-    root = BasicReteNode("root")
+    root = ReteRootNode("root")
     @test label(root) == "root"
     ints = IsaMemoryNode{Int}()
     @test ints isa AbstractMemoryNode
@@ -34,7 +34,7 @@ end
 end
 
 @testset "simple join test a b" begin
-    root = BasicReteNode("root")
+    root = ReteRootNode("root")
     chars = IsaMemoryNode{Char}()
     ints = IsaMemoryNode{Int}()
     connect(root, chars)
@@ -62,7 +62,7 @@ end
 end
 
 @testset "symetric join test" begin
-    root = BasicReteNode("root")
+    root = ReteRootNode("root")
     ints = IsaMemoryNode{Int}()
     join = JoinNode("join", 2,
                     function(node, a, b)
@@ -87,7 +87,7 @@ end
 end
 
 @testset "3-ary join" begin
-    root = BasicReteNode("root")
+    root = ReteRootNode("root")
     ints = IsaMemoryNode{Int}()
     chars = IsaMemoryNode{Char}()
     join = JoinNode("join", 3,
@@ -117,7 +117,7 @@ end
 end
 
 @testset "ensure_IsaMemoryNode" begin
-    root = BasicReteNode("root")
+    root = ReteRootNode("root")
     n1 = ensure_IsaMemoryNode(root, Char)
     @test n1 == ensure_IsaMemoryNode(root, Char)
     @test length(root.outputs) == 1

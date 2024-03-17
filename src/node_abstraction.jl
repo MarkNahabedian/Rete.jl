@@ -88,25 +88,6 @@ function connect(from::AbstractReteNode, to::AbstractReteNode)
 end
 
 
-
-"""
-    install(root, rule)
-
-Installs the rule or rule group into the Rete rooted at `root`.
-"""
-function install end
-
-function install(root::AbstractReteNode, rule_group)
-    if isconcretetype(rule_group)
-        install(root, rule_group)
-    else
-        for r in subtypes(rule_group)
-            install(root, r)
-        end
-    end
-end
-
-
 """
     askc(continuation, node)
 
