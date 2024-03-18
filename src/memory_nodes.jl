@@ -56,6 +56,12 @@ function askc(continuation, node::AbstractMemoryNode)
     end
 end
 
+function askc(continuation, root::ReteRootNode, t::Type)
+    m = find_memory_for_type(root, t)
+    if m != nothing
+        askc(continuation, m)
+    end
+end
 
 
 """

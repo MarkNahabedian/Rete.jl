@@ -79,7 +79,7 @@ alphabet from the first.
 ```@example rule1
 using Rete
 
-@rule PairConectutiveLetters(a::Char, b::Char) begin
+@rule PairConectutiveLetters(a::Char, b::Char, ::String) begin
     if codepoint(a) + 1 == codepoint(b)
         emit(a * b)
     end
@@ -93,17 +93,19 @@ end
 
 
 ```@example rule1
+# Create the knowledgebase:
 root = ReteRootNode("root")
 install(root, PairConectutiveLetters())
-ensure_IsaMemoryNode(root, String) # to colect the output
 
+# Assert the characters 'a' through 'e' into the knowledgebase:
 for c in 'a':'e'
     receive(root, c)
 end
 
-collect(find_memory_for_type(root, String).memory)
+collecting() do c
+    askc(c, root, String)
+end
 ```
-
 
 
 ## Index

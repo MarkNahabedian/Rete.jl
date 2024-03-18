@@ -13,3 +13,9 @@ Rete algorithm.
 Only forward chaining is supported.
 
 See the documentation linked above.
+
+Rete.jl is used extensively in
+[SquareDanceReasoning.jl](https://github.com/MarkNahabedian/SquareDanceReasoning.jl).  See the
+[formations code](https://github.com/MarkNahabedian/SquareDanceReasoning.jl/tree/main/src/formations)
+for real examples of rules and the use of Rete.jl.
+

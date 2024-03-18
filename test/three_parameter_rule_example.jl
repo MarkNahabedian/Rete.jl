@@ -8,7 +8,6 @@ end
 @testset "three input rule" begin
     root = ReteRootNode("root")
     install(root, ThreeInputRule)
-    conclusions = find_memory_for_type(root, String)
     for c in 'a':'c'
         receive(root, c)
     end
@@ -16,7 +15,7 @@ end
         receive(root, i)
     end
     results = collecting() do c
-        askc(c, conclusions)
+        askc(c, root, String)
     end
     @test sort(results) ==
         sort(["a1b", "a1c",

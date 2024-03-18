@@ -17,14 +17,13 @@ end
     root = ReteRootNode("root")
     install(root, JoinSequentialLetterDigram2)
     install(root, JoinSequentialLetterTrigram2)
-    conclusions = find_memory_for_type(root, String)
     @test length(root.inputs) == 2
     @test length(root.outputs) == 3
     for c in 'a':'g'
         receive(root, c)
     end
     results = collecting() do c
-        askc(c, conclusions)
+        askc(c, root, String)
     end
     @test sort(results) ==
         sort(["abc", "bcd", "cde", "def", "efg"])
