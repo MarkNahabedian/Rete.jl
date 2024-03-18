@@ -1,7 +1,5 @@
 
-using DataStructures: SortedDict
-
-export collecting
+export collecting, kb_counts
 
 """
     collecting(body)
@@ -20,16 +18,23 @@ end
 
 
 """
-    kb_counts(root)
+    kb_counts(root::ReteRootNode)
 
 Returns a `Dict{Type, Int}` of the number of facts of each type.
 """
-function kb_counts(root)
-    result = SortedDict{Type, Int}()
-    for node in root.outputs
-        @assert node isa IsaMemoryNode
-        result[typeof(node).parameters[1]] = length(node.memory)
+function kb_counts(root::ReteRootNode)
+    result = Dict{Type, Int}()
+    function walk(node)
+        if node isa IsaMemoryNode
+            result[typeof(node).parameters[1]] = length(node.memory)
+        end
+        for o in node.outputs
+            if o !== root
+                walk(o)
+            end
+        end
     end
+    walk(root)
     result
 end
 

@@ -32,5 +32,10 @@ end
             "a1b", "a2b", "a3b",
             "b1c", "b2c", "b3c"
         ])
+    counts = kb_counts(root)
+    @test counts[Char] == 3
+    @test counts[Int64] == 3
+    @test counts[Tuple{Char, Char}] == 2
+    @test counts[String] == 6
 end
 
