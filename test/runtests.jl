@@ -114,6 +114,11 @@ end
         askc(c, conclusions)
     end
     @test sort(results) == sort(["1a2", "2a1", "1b2", "2b1"])
+    all_facts = collecting() do c
+        askc(c, root.outputs)
+    end
+    all_facts = sort(all_facts; by = string)
+    @test all_facts == [1, "1a2", "1b2", 2, "2a1", "2b1", 'a', 'b']
 end
 
 @testset "ensure_IsaMemoryNode" begin
