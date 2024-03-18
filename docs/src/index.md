@@ -39,7 +39,7 @@ streams.  The function can call [`emit`](@ref) to assert a new *fact*
 to the network.
 
 
-srcThat's the theory.  In practice, its simpler if a given node performs
+That's the theory.  In practice, its simpler if a given node performs
 more than one of these roles.  One such example is
 [`IsaMemoryNode`](@ref), which filters *facts* that match a type
 parameter and remember only those *facts*.
@@ -51,7 +51,7 @@ from those inputs to be processed.
 
 ### Layers
 
-The network might best be constructed in layers.  A singgle root node
+The network might best be constructed in layers.  A single root node
 forms the top layer.  It serves as the recipient of new facts.  It
 distributes those facts to the next layer, which consists of memory
 nodes.  A third layer consists of join nodes, typically defined by
@@ -93,7 +93,7 @@ end
 
 
 ```@example rule1
-root = BasicReteNode("root")
+root = ReteRootNode("root")
 install(root, PairConectutiveLetters())
 ensure_IsaMemoryNode(root, String) # to colect the output
 

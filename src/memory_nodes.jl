@@ -62,7 +62,7 @@ end
     find_memory_for_type(root, typ::Type)::UnionPNothing, IsaTypeNode}
 
 If there's a memory node in the Rete represented by `root` that stores
-objects of the specified type then return it.  Otherwiaw return
+objects of the specified type then return it.  Otherwise return
 nothing.
 """
 function find_memory_for_type(root, typ::Type)::Union{Nothing, IsaMemoryNode}
