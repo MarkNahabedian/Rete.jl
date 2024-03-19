@@ -1,4 +1,6 @@
 
+using DataStructures: DefaultDict
+
 @rule JoinSequentialLetterDigram2(a::Char, b::Char,
                                   ::Tuple{Char, Char}) begin
     if codepoint(a) + 1 == codepoint(b)
@@ -27,5 +29,14 @@ end
     end
     @test sort(results) ==
         sort(["abc", "bcd", "cde", "def", "efg"])
+    # Test askc for subtypes:
+    count_by_type = DefaultDict{Type, Int}(0)
+    askc(root, Any) do fact
+        count_by_type[typeof(fact)] += 1
+    end
+    @test Set(collect(count_by_type)) ==
+        Set([Char => 7,
+             Tuple{Char, Char} => 6,
+             String => 5])
 end
 

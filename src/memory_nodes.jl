@@ -56,10 +56,21 @@ function askc(continuation, node::AbstractMemoryNode)
     end
 end
 
+"""
+    askc(continuation, root::ReteRootNode, t::Type)
+
+calls `continuation` on every fact of the specified type (or its
+subtypes) that are stored in the network rooted at `roor`.
+"""
 function askc(continuation, root::ReteRootNode, t::Type)
-    m = find_memory_for_type(root, t)
-    if m != nothing
-        askc(continuation, m)
+    for o in root.outputs
+        if o isa IsaMemoryNode
+            if length(typeof(o).parameters) == 1
+                if typeof(o).parameters[1] <: t
+                    askc(continuation, o)
+                end
+            end
+        end
     end
 end
 
@@ -71,7 +82,8 @@ If there's a memory node in the Rete represented by `root` that stores
 objects of the specified type then return it.  Otherwise return
 nothing.
 """
-function find_memory_for_type(root, typ::Type)::Union{Nothing, IsaMemoryNode}
+function find_memory_for_type(root::ReteRootNode,
+                              typ::Type)::Union{Nothing, IsaMemoryNode}
     for o in root.outputs
         if o isa IsaMemoryNode
             if length(typeof(o).parameters) == 1
