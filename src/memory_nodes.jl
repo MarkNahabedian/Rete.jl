@@ -34,6 +34,7 @@ end
 
 label(node::IsaMemoryNode{T}) where {T} = "isa $T memory"
 
+find_root(node::IsaMemoryNode) = find_root(first(node.inputs))
 
 function receive(node::IsaMemoryNode, fact)
     # Ignore facts not relevant to this memory node.

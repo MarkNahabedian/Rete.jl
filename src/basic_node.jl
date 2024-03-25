@@ -19,6 +19,8 @@ end
     
 label(node::ReteRootNode) = node.label
 
+find_root(node::ReteRootNode) = node
+
 function receive(node::ReteRootNode, fact)
     emit(node, fact)
 end

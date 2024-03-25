@@ -1,6 +1,6 @@
 export AbstractReteNode, AbstractMemoryNode, AbstractReteJoinNode
 export label, inputs, outputs, connect, emit, receive, install
-export askc
+export find_root, askc
 
 
 """
@@ -86,6 +86,15 @@ function connect(from::AbstractReteNode, to::AbstractReteNode)
     push!(to.inputs, from)
     nothing
 end
+
+
+"""
+    find_root(node)
+
+Returs the root of the network of which `node` is a member.
+"""
+function find_root end
+
 
 
 """
