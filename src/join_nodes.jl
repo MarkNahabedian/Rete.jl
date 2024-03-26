@@ -1,5 +1,4 @@
 
-using Base.Iterators: flatten
 using IterTools: repeatedly
 
 export JoinNode
