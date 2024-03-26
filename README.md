@@ -10,7 +10,8 @@
 Rete is a simple library for implementing rule based systems using the
 Rete algorithm.
 
-Only forward chaining is supported.
+Rete currently implements memory for Julia types, forward chaining
+joins, and backward chaining filter and extrema operations.
 
 See the documentation linked above.
 

@@ -132,6 +132,7 @@ end
     @test length(root.outputs) == 1
 end
 
+include("test_backwards.jl")
 include("rule_example_2.jl")
 include("rule_grouping.jl")
 include("three_parameter_rule_example.jl")
