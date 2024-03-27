@@ -6,8 +6,8 @@ CurrentModule = Rete
 
 Documentation for [Rete](https://github.com/MarkNahabedian/Rete.jl).
 
-In its current form, this package only supports forward chaining
-rules.
+Rete currently implements memory for Julia types, forward chaining
+joins, and backward chaining filter and extrema operations.
 
 
 ## Facts
@@ -106,6 +106,18 @@ collecting() do c
     askc(c, root, String)
 end
 ```
+
+
+## Backward Chaining
+
+Rete currently provides limited support for backward chaining by using
+the [`BackwardFilterNode`](@ref) and [`BackwardExtremumNode`](@ref)
+node types.
+
+There is not yet any facility to make it easier to integrate these
+nodes into the network.  You will need to use the node constructors
+and [`connect`](@ref) to add them by hand.
+
 
 
 ## Index
