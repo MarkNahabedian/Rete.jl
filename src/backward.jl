@@ -73,7 +73,7 @@ function askc(continuation, node::BackwardExtremumNode)
     for input in node.inputs
         askc(input) do fact
             if extremum === nothing || node.comparison(node.extractor(fact),
-                                                       extremum)
+                                                       node.extractor(extremum))
                 extremum = fact
             end
         end
