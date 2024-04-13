@@ -18,7 +18,7 @@ end
 """
      BackwardFilterNode(filter_function, label)
 
-When `askc`ed, passes through from its inputs only those facts whuich
+When `askc`ed, passes through from its inputs only those facts which
 satisfy `predicate`.
 """
 struct BackwardFilterNode <: BackwardChaining

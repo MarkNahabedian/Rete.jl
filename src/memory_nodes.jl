@@ -61,7 +61,9 @@ end
     askc(continuation, root::ReteRootNode, t::Type)
 
 calls `continuation` on every fact of the specified type (or its
-subtypes) that are stored in the network rooted at `roor`.
+subtypes) that are stored in the network rooted at `root`.
+
+Assumes all memory nodes are direct outputs of `root`.
 """
 function askc(continuation, root::ReteRootNode, t::Type)
     for o in root.outputs
