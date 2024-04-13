@@ -33,6 +33,14 @@ end
     @test Set{Int}(1:5) == ints.memory
 end
 
+function all_inputs_are_triggers(join::JoinNode)
+    for input_tuple in join.inputs
+        for input in input_tuple
+            add_forward_trigger(join, input)
+        end
+    end
+end
+
 @testset "simple join test a b" begin
     root = ReteRootNode("root")
     chars = IsaMemoryNode{Char}()
@@ -48,6 +56,7 @@ end
     conclusions = IsaMemoryNode{String}()
     connect(root, conclusions)
     connect(join, root)
+    all_inputs_are_triggers(join)
     for c in 'a':'c'
         receive(root, c)
     end
@@ -80,6 +89,7 @@ end
     connect(ints, join, 1)
     connect(ints, join, 2)
     connect(join, root)
+    all_inputs_are_triggers(join)
     for i in 1:5
         receive(root, i)
     end
@@ -108,6 +118,7 @@ end
     connect(chars, join, 2)
     connect(ints, join, 3)
     connect(join, root)
+    all_inputs_are_triggers(join)
     for i in 1:2
         receive(root, i)
     end

@@ -60,6 +60,10 @@ macro rule(call, body)
     end
     output_memories = map(t -> :(ensure_IsaMemoryNode(root, $t)),
                           output_types)
+    forward_triggers = map(1:length(input_exprs)) do i
+        :(add_forward_trigger(join,
+                              ensure_IsaMemoryNode(root, $(input_type(i)))))
+    end
     arg_decls = map(1:length(input_exprs)) do i
         :($(input_var(i))::$(input_type(i)))
     end
@@ -81,6 +85,7 @@ macro rule(call, body)
                             $rule_name())
             $(input_connections...)
             $(output_memories...)
+            $(forward_triggers...)
             connect(join, root)
         end
 

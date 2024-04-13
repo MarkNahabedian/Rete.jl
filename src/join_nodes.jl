@@ -1,7 +1,8 @@
 
 using IterTools: repeatedly
 
-export JoinNode
+export JoinNode, add_forward_trigger, is_forward_trigger
+
 
 """
 JoinNode implements a join operation between multiple streams of
@@ -14,12 +15,17 @@ struct JoinNode <: AbstractReteJoinNode
     label::String
     inputs
     outputs::Set{AbstractReteNode}
+    forward_triggers::Set{AbstractReteNode}
     join_function
 
     JoinNode(label::String, input_arity, join_function) =
         new(label,
+            # inputs:
             Tuple(repeatedly(() -> Set{AbstractMemoryNode}(),
                              input_arity)),
+            # outputs:
+            Set{AbstractReteNode}(),
+            # forward_triggers
             Set{AbstractReteNode}(),
             join_function)
 end
@@ -34,6 +40,30 @@ function connect(from::AbstractReteNode, to::JoinNode, input::Int)
     push!(from.outputs, to)
     push!(to.inputs[input], from)
 end
+
+
+"""
+    add_forward_trigger(n::JoinNode, from::AbstractReteNode)
+
+adds `from` as a forward trigger of the JoinNode.
+
+When a JoinNode `receive`s a fact from one of its forward trigger
+inputs, it joins that input with all combinations of facts from other
+inputs and performs its `join_function`.  Otherwise the JoinNode is
+not triggered.
+"""
+function add_forward_trigger(n::JoinNode, from::AbstractReteNode)
+    push!(n.forward_triggers, from)
+end
+
+
+"""
+    is_forward_trigger(::JoinNode, from::AbstractReteNode)
+
+returns true if `from` is a forward trigger input of the JoinNode.
+"""
+is_forward_trigger(n::JoinNode, from::AbstractReteNode) =
+    in(from, n.forward_triggers)
 
 
 function receive(node::JoinNode, fact, from::AbstractMemoryNode)
@@ -51,11 +81,13 @@ function receive(node::JoinNode, fact, from::AbstractMemoryNode)
             if !hasfact && argnumber > last_from_pos
                 return
             end
-            for input in node.inputs[argnumber]
-                askc(input) do i_fact
-                    args[argnumber] = i_fact
-                    helper(argnumber + 1,
-                           hasfact || (i_fact == fact))
+            if is_forward_trigger(node, from)
+                for input in node.inputs[argnumber]
+                    askc(input) do i_fact
+                        args[argnumber] = i_fact
+                        helper(argnumber + 1,
+                               hasfact || (i_fact == fact))
+                    end
                 end
             end
         end
