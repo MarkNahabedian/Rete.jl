@@ -1,6 +1,6 @@
 export AbstractReteNode, AbstractMemoryNode, AbstractReteJoinNode
 export label, inputs, outputs, connect, emit, receive, install
-export find_root, askc
+export find_root, askc, walk_by_outputs
 
 
 """
@@ -111,5 +111,28 @@ function askc(continuation, s::Set{<:AbstractReteNode})
             continuation(fact)
         end
     end
+end
+
+
+"""
+   walk_by_outputs(func, node::AbstractReteNode)
+
+Walks the network rooted at `root', applying func to each node.
+"""
+function walk_by_outputs(func, node::AbstractReteNode)
+    visited = []
+    function walker(node::AbstractReteNode)
+        if in(node, visited)
+            return
+        end
+        push!(visited, node)
+        func(node)
+        if :outputs in fieldnames(typeof(node))
+            for o in node.outputs
+                walker(o)
+            end
+        end
+    end
+    walker(node)
 end
 
