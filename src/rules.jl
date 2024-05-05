@@ -14,7 +14,7 @@ abstract type Rule end
 
 Returns a Tuple of the types which `rule` is declared to emit.
 """
-function emits end
+emits(rule) = ()
 
 
 function exttract_rule_declarations(body::Expr)
@@ -112,6 +112,7 @@ macro rule(call, body)
             error("Unrecognized rule parameter expression $arg")
         end
     end
+    sort!(output_types)
     input_var(i) = input_exprs[i].args[1]
     input_type(i) = input_exprs[i].args[2]
     input_connections = map(1:length(input_exprs)) do i
