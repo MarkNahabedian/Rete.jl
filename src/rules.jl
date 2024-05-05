@@ -1,12 +1,20 @@
 using MacroTools
 using MacroTools: isexpr, postwalk
 
-export Rule, @rule
+export Rule, @rule, emits
 
 """
 Rule is an abstract supertype for all rules.
 """
 abstract type Rule end
+
+
+"""
+    emits(rule::Type)
+
+Returns a Tuple of the types which `rule` is declared to emit.
+"""
+function emits end
 
 
 function exttract_rule_declarations(body::Expr)
@@ -172,6 +180,7 @@ macro rule(call, body)
     end
     esc(quote
         struct $rule_name <: $supertype end
+        Rete.emits(::Type{$rule_name}) = tuple($(output_types...))
         $(install_method...)
         function(::$rule_name)(node::JoinNode, $(arg_decls...))
             $body

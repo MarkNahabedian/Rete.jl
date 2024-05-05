@@ -23,5 +23,6 @@ end
               "b1c", "b2a",
               "b2c", "c1a", "c1b",
               "c2a", "c2b"])
+    @test emits(ThreeInputRule) == (String,)
 end
 
