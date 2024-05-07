@@ -1,10 +1,28 @@
 
-export collecting, kb_counts
+export counting, collecting, kb_counts
+
+
+"""
+    counting(body)
+
+Runs `body`, passing it a continuation of one argument (which is
+ignored), that counts the number of times the continuation is called.
+One `body` is fnished, `counting` returns that count.
+"""
+function counting(body)
+    count = 0
+    function counter(_)
+        count += 1
+    end
+    body(counter)
+    count
+end
+
 
 """
     collecting(body)
 
-runs body, passing it a continuation of one argument that collects the
+runs `body`, passing it a continuation of one argument that collects the
 values it's called with. `collecting` returns those values.
 """
 function collecting(body)

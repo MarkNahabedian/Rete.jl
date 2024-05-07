@@ -1,6 +1,15 @@
 using Rete
 using Test
 
+@testset "test counting" begin
+    c = counting() do c
+        for x in 1:20
+            c(x)
+        end
+    end
+    @test c == 20
+end
+
 @testset "test collecting" begin
     c = collecting() do c
         for x in 1:4
