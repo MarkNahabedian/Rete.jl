@@ -1,7 +1,7 @@
 
 @testset "test BackwardFilterNode" begin
     root = ReteRootNode("root")
-    ints = ensure_IsaMemoryNode(root, Int)
+    ints = ensure_memory_node(root, Int)
     connect(root, ints)
     even = BackwardFilterNode(iseven, "even Ints")
     connect(ints, even)
@@ -16,7 +16,7 @@ end
 
 @testset "test BackwardExtremumNode" begin
     root = ReteRootNode("root")
-    ints = ensure_IsaMemoryNode(root, Int)
+    ints = ensure_memory_node(root, Int)
     connect(root, ints)
     maxval = BackwardExtremumNode(>, identity, "greatest int")
     connect(ints, maxval)

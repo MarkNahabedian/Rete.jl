@@ -11,6 +11,8 @@ abstract type AbstractReteNode end
 
 """
 AbstractMemoryNode is the abstract supertype of all Rete memory nodes.
+
+Each concrete sybtype should implement [`is_memory_for_type`](@ref).
 """
 abstract type AbstractMemoryNode <: AbstractReteNode end
 

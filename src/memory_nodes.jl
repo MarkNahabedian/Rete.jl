@@ -1,7 +1,8 @@
 
 using OrderedCollections: OrderedSet
 
-export IsaMemoryNode, find_memory_for_type, ensure_IsaMemoryNode
+export IsaMemoryNode
+export is_memory_for_type, find_memory_for_type, ensure_memory_node
 
 
 function emit(node::AbstractMemoryNode,
@@ -33,6 +34,15 @@ struct IsaMemoryNode{T} <: AbstractMemoryNode
 end
 
 label(node::IsaMemoryNode{T}) where {T} = "isa $T memory"
+
+
+"""
+    is_memory_for_type(node, typ::Type)::Bool
+
+returns `true` if `node` stores objects of the specified type.
+"""
+is_memory_for_type(node::IsaMemoryNode, typ::Type)::Bool =
+    typ == typeof(node).parameters[1]
 
 find_root(node::IsaMemoryNode) = find_root(first(node.inputs))
 
@@ -79,21 +89,17 @@ end
 
 
 """
-    find_memory_for_type(root, typ::Type)::UnionPNothing, IsaTypeNode}
+    find_memory_for_type(root, typ::Type)::Union(Nothing, AbstractMemoryNode}
 
 If there's a memory node in the Rete represented by `root` that stores
 objects of the specified type then return it.  Otherwise return
 nothing.
 """
 function find_memory_for_type(root::ReteRootNode,
-                              typ::Type)::Union{Nothing, IsaMemoryNode}
+                              typ::Type)::Union{Nothing, AbstractMemoryNode}
     for o in root.outputs
-        if o isa IsaMemoryNode
-            if length(typeof(o).parameters) == 1
-                if typ == typeof(o).parameters[1]
-                    return o
-                end
-            end
+        if is_memory_for_type(o, typ)
+            return o
         end
     end
     return nothing
@@ -101,12 +107,16 @@ end
 
 
 """
-    ensure_IsaMemoryNode(root, typ::Type)::IsaTypeNode
+    ensure_memory_node(root::ReteRootNode, typ::Type)::IsaTypeNode
 
-Find the IsaMemoryNode for the specified type, or make one and add it
+Find a memory node for the specified type, or make one and add it
 to the network.
+
+The default is to make an IsaMemoryNode.  Specialize this function for
+a `Type` to control what type of memory node should be used for that
+type.
 """
-function ensure_IsaMemoryNode(root, typ::Type)::IsaMemoryNode
+function ensure_memory_node(root::ReteRootNode, typ::Type)::AbstractMemoryNode
     n = find_memory_for_type(root, typ)
     if n !== nothing
         return n

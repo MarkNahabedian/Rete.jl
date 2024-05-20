@@ -116,10 +116,10 @@ macro rule(call, body)
     input_var(i) = input_exprs[i].args[1]
     input_type(i) = input_exprs[i].args[2]
     input_connections = map(1:length(input_exprs)) do i
-        :(connect(ensure_IsaMemoryNode(root, $(input_type(i))),
+        :(connect(ensure_memory_node(root, $(input_type(i))),
                   join, $i))
     end
-    output_memories = map(t -> :(ensure_IsaMemoryNode(root, $t)),
+    output_memories = map(t -> :(ensure_memory_node(root, $t)),
                           output_types)
     function input_arg_to_type(argname)
         for ie in input_exprs
@@ -141,7 +141,7 @@ macro rule(call, body)
             push!(forward_triggers,
                   :(add_forward_trigger(
                       join,
-                      ensure_IsaMemoryNode(
+                      ensure_memory_node(
                           root,
                           $(input_arg_to_type(trigger_arg))))))
         end
@@ -152,7 +152,7 @@ macro rule(call, body)
             push!(forward_triggers,
                   :(add_forward_trigger(
                       join,
-                      ensure_IsaMemoryNode(root, $(ie.args[2])))))
+                      ensure_memory_node(root, $(ie.args[2])))))
         end
     end
     arg_decls = map(1:length(input_exprs)) do i

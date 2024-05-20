@@ -145,10 +145,10 @@ end
     @test all_facts == [1, "1a2", "1b2", 2, "2a1", "2b1", 'a', 'b']
 end
 
-@testset "ensure_IsaMemoryNode" begin
+@testset "ensure_memory_node" begin
     root = ReteRootNode("root")
-    n1 = ensure_IsaMemoryNode(root, Char)
-    @test n1 == ensure_IsaMemoryNode(root, Char)
+    n1 = ensure_memory_node(root, Char)
+    @test n1 == ensure_memory_node(root, Char)
     @test length(root.outputs) == 1
 end
 
