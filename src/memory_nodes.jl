@@ -40,9 +40,12 @@ label(node::IsaMemoryNode{T}) where {T} = "isa $T memory"
     is_memory_for_type(node, typ::Type)::Bool
 
 returns `true` if `node` stores objects of the specified type.
+
+Used by [`find_memory_for_type`](@ref).
 """
 is_memory_for_type(node::IsaMemoryNode, typ::Type)::Bool =
     typ == typeof(node).parameters[1]
+
 
 function receive(node::IsaMemoryNode, fact)
     # Ignore facts not relevant to this memory node.
@@ -59,7 +62,7 @@ function receive(node::IsaMemoryNode{T}, fact::T) where{T}
 end
 
 
-function askc(continuation, node::AbstractMemoryNode)
+function askc(continuation, node::IsaMemoryNode)
     for fact in node.memory
         continuation(fact)
     end
