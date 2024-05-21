@@ -72,10 +72,6 @@ end
     for i in 1:3
         receive(root, i)
     end
-    # As good a place as any to test finding the root:
-    @test find_root(root) == root
-    @test find_root(conclusions) == root
-    @test find_root(join) == root
     results = collecting() do c
         askc(c, conclusions)
     end

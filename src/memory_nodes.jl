@@ -44,8 +44,6 @@ returns `true` if `node` stores objects of the specified type.
 is_memory_for_type(node::IsaMemoryNode, typ::Type)::Bool =
     typ == typeof(node).parameters[1]
 
-find_root(node::IsaMemoryNode) = find_root(first(node.inputs))
-
 function receive(node::IsaMemoryNode, fact)
     # Ignore facts not relevant to this memory node.
 end

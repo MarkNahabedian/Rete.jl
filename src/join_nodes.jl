@@ -32,8 +32,6 @@ end
 
 label(n::JoinNode) = n.label
 
-find_root(n::JoinNode) = find_root(first(first(n.inputs)))
-
 function connect(from::AbstractReteNode, to::JoinNode, input::Int)
     @assert input >= 1
     @assert input <= length(to.inputs)
