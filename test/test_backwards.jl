@@ -12,6 +12,11 @@
         askc(c, even)
     end
     @test sort(filtered) == [2, 4, 6, 8, 10]
+    let
+        io = IOBuffer()
+        show(io, even)
+        @test String(take!(io)) == "BackwardFilterNode \"even Ints\" with 1 inputs, 1 outputs."
+    end
 end
 
 @testset "test BackwardExtremumNode" begin
@@ -27,5 +32,10 @@ end
         askc(c, maxval)
     end
     @test extreme == [10]
+    let
+        io = IOBuffer()
+        show(io, maxval)
+        @test String(take!(io)) == "BackwardExtremumNode \"greatest int\" with 1 inputs, 1 outputs."
+    end
 end
 

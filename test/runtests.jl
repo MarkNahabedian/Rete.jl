@@ -27,6 +27,11 @@ end
     @test n1.outputs == Set([n2])
     @test n2.inputs == Set([n1])
     @test n2.outputs == Set()
+    let
+        io = IOBuffer()
+        show(io, n1)
+        @test String(take!(io)) == "ReteRootNode \"node 1\" with 0 inputs, 0 outputs."
+    end
 end
 
 @testset "Simple memory test" begin
@@ -40,6 +45,11 @@ end
         receive(root, i)
     end
     @test Set{Int}(1:5) == ints.memory
+    let
+        io = IOBuffer()
+        show(io, ints)
+        @test String(take!(io)) == "IsaMemoryNode{Int64} \"isa Int64 memory\" with 1 inputs, 1 outputs, 5 facts."
+    end
 end
 
 function all_inputs_are_triggers(join::JoinNode)
@@ -77,6 +87,11 @@ end
     end
     @test sort(results) ==
         sort(["a1", "b1", "c1", "a2", "b2", "c2", "a3", "b3", "c3"])
+    let
+        io = IOBuffer()
+        show(io, join)
+        @test String(take!(io)) == "JoinNode \"join char int\" with 2 inputs, 2 outputs."
+    end
 end
 
 @testset "symetric join test" begin

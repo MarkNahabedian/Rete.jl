@@ -33,6 +33,14 @@ struct IsaMemoryNode{T} <: AbstractMemoryNode
                 
 end
 
+function Base.show(io::IO, node::IsaMemoryNode{T}) where T
+    print(io, "$(typeof(node)) \"$(label(node))\" with $(length(inputs(node))) inputs, $(length(inputs(node))) outputs, $(length(node.memory)) facts.")
+end
+
+inputs(node::IsaMemoryNode{T}) where {T} = node.inputs
+
+outputs(node::IsaMemoryNode{T}) where {T} = node.outputs
+
 label(node::IsaMemoryNode{T}) where {T} = "isa $T memory"
 
 

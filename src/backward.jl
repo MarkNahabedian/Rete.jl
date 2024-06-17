@@ -34,6 +34,16 @@ struct BackwardFilterNode <: BackwardChaining
     end
 end
 
+inputs(node::BackwardFilterNode) = node.inputs
+
+outputs(node::BackwardFilterNode) = node.outputs
+
+label(node::BackwardFilterNode) = node.label
+
+function Base.show(io::IO, node::BackwardFilterNode)
+    print(io, "$(typeof(node)) \"$(label(node))\" with $(length(inputs(node))) inputs, $(length(inputs(node))) outputs.")
+end
+
 function askc(continuation, node::BackwardFilterNode)
     for input in node.inputs
         askc(input) do fact
@@ -66,6 +76,17 @@ struct BackwardExtremumNode <: BackwardChaining
             Set{AbstractReteNode}(),
             comparison, extractor, label)
     end
+end
+
+inputs(node::BackwardExtremumNode) = node.inputs
+
+outputs(node::BackwardExtremumNode) = node.outputs
+
+label(node::BackwardExtremumNode) = node.label
+
+
+function Base.show(io::IO, node::BackwardExtremumNode)
+    print(io, "$(typeof(node)) \"$(label(node))\" with $(length(inputs(node))) inputs, $(length(inputs(node))) outputs.")
 end
 
 function askc(continuation, node::BackwardExtremumNode)

@@ -17,7 +17,15 @@ struct ReteRootNode <: AbstractReteNode
     end
 end
     
+inputs(node::ReteRootNode) = node.inputs
+
+outputs(node::ReteRootNode) = node.outputs
+
 label(node::ReteRootNode) = node.label
+
+function Base.show(io::IO, node::ReteRootNode)
+    print(io, "$(typeof(node)) \"$(label(node))\" with $(length(inputs(node))) inputs, $(length(inputs(node))) outputs.")
+end
 
 function receive(node::ReteRootNode, fact)
     emit(node, fact)

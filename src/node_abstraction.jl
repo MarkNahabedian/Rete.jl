@@ -90,15 +90,6 @@ function connect(from::AbstractReteNode, to::AbstractReteNode)
 end
 
 
-function Base.show(io::IO, ::MIME"text/plain", node::AbstractReteNode)
-    print(io, "$(typeof(node)) \"$(label(node))\" with $(length(inputs(node))) inputs, $(length(inputs(node))) outputs.")
-end
-
-function Base.show(io::IO, ::MIME"text/plain", node::AbstractMemoryNode)
-    print(io, "$(typeof(node)) \"$(label(node))\" with $(length(inputs(node))) inputs, $(length(inputs(node))) outputs, $(length(node.memory)) facts.")
-end
-
-
 """
     askc(continuation, node)
 
