@@ -15,6 +15,17 @@ end
     end
 end
 
+
+EXECTED_KB_STATS = """
+inputs \toutputs \tfacts \tlabel
+     2 \t     1 \t       \tJoinSequentialLetterDigram2
+     2 \t     1 \t       \tJoinSequentialLetterTrigram2
+     1 \t     2 \t     7 \tisa Char memory
+     1 \t     0 \t     5 \tisa String memory
+     1 \t     1 \t     6 \tisa Tuple{Char, Char} memory
+     2 \t     3 \t       \troot
+"""
+
 @testset "rule example 2" begin
     root = ReteRootNode("root")
     install(root, JoinSequentialLetterDigram2)
@@ -38,5 +49,10 @@ end
         Set([Char => 7,
              Tuple{Char, Char} => 6,
              String => 5])
+    let
+        io = IOBuffer()
+        kb_stats(io, root)
+        @test String(take!(io)) == EXECTED_KB_STATS
+    end
 end
 
