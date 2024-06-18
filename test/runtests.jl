@@ -28,9 +28,13 @@ end
     @test n2.inputs == Set([n1])
     @test n2.outputs == Set()
     let
+        @test input_count(n1) == 0
+        @test output_count(n1) == 1
+        @test input_count(n2) == 1
+        @test output_count(n2) == 0
         io = IOBuffer()
         show(io, n1)
-        @test String(take!(io)) == "ReteRootNode \"node 1\" with 0 inputs, 0 outputs."
+        @test String(take!(io)) == "ReteRootNode \"node 1\" with 0 inputs, 1 outputs."
     end
 end
 
@@ -48,7 +52,7 @@ end
     let
         io = IOBuffer()
         show(io, ints)
-        @test String(take!(io)) == "IsaMemoryNode{Int64} \"isa Int64 memory\" with 1 inputs, 1 outputs, 5 facts."
+        @test String(take!(io)) == "IsaMemoryNode{Int64} \"isa Int64 memory\" with 1 inputs, 0 outputs, 5 facts."
     end
 end
 
@@ -88,9 +92,11 @@ end
     @test sort(results) ==
         sort(["a1", "b1", "c1", "a2", "b2", "c2", "a3", "b3", "c3"])
     let
+        @test input_count(join) == 2
+        @test output_count(join) == 1
         io = IOBuffer()
         show(io, join)
-        @test String(take!(io)) == "JoinNode \"join char int\" with 2 inputs, 2 outputs."
+        @test String(take!(io)) == "JoinNode \"join char int\" with 2 inputs, 1 outputs."
     end
 end
 

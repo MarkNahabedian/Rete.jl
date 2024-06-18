@@ -13,9 +13,11 @@
     end
     @test sort(filtered) == [2, 4, 6, 8, 10]
     let
+        @test input_count(even) == 1
+        @test output_count(even) == 0
         io = IOBuffer()
         show(io, even)
-        @test String(take!(io)) == "BackwardFilterNode \"even Ints\" with 1 inputs, 1 outputs."
+        @test String(take!(io)) == "BackwardFilterNode \"even Ints\" with 1 inputs, 0 outputs."
     end
 end
 
@@ -33,9 +35,11 @@ end
     end
     @test extreme == [10]
     let
+        @test input_count(maxval) == 1
+        @test output_count(maxval) == 0
         io = IOBuffer()
         show(io, maxval)
-        @test String(take!(io)) == "BackwardExtremumNode \"greatest int\" with 1 inputs, 1 outputs."
+        @test String(take!(io)) == "BackwardExtremumNode \"greatest int\" with 1 inputs, 0 outputs."
     end
 end
 

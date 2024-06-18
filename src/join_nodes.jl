@@ -36,10 +36,6 @@ outputs(n::JoinNode) = n.outputs
 
 label(n::JoinNode) = n.label
 
-function Base.show(io::IO, node::JoinNode)
-    print(io, "$(typeof(node)) \"$(label(node))\" with $(length(inputs(node))) inputs, $(length(inputs(node))) outputs.")
-end
-
 
 function connect(from::AbstractReteNode, to::JoinNode, input::Int)
     @assert input >= 1
