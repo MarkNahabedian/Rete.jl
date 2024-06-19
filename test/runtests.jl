@@ -174,4 +174,5 @@ include("rule_example_2.jl")
 include("rule_grouping.jl")
 include("three_parameter_rule_example.jl")
 include("test_rule_decls.jl")
+include("test_copy_facts.jl")
 

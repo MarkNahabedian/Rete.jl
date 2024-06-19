@@ -4,7 +4,7 @@ using Printf
 export AbstractReteNode, AbstractMemoryNode, AbstractReteJoinNode
 export label, inputs, outputs, connect, emit, receive, install
 export input_count, output_count, fact_count
-export askc, walk_by_outputs, kb_stats
+export askc, walk_by_outputs
 
 
 """
@@ -176,36 +176,4 @@ end
 function Base.show(io::IO, node::AbstractMemoryNode)
     print(io, "$(typeof(node)) \"$(label(node))\" with $(input_count(node)) inputs, $(output_count(node)) outputs, $(fact_count(node)) facts.")
 end
-
-
-"""
-    kb_stats(io, root)
-
-Show the input count, output count, fact count and label for each
-node.
-"""
-function kb_stats(io, node)
-    stats = []
-    walk_by_outputs(node) do node
-        push!(stats, node)
-    end
-    stats = sort!(stats; by = label)
-    @printf(io, "inputs \toutputs \tfacts \tlabel\n")
-    for node in stats
-        if fact_count(node) == nothing
-            @printf(io, "%6d \t%6d \t       \t%s\n",
-                    input_count(node),
-                    output_count(node),
-                    label(node))
-        else
-            @printf(io, "%6d \t%6d \t%6d \t%s\n",
-                    input_count(node),
-                    output_count(node),
-                    fact_count(node),
-                    label(node))
-        end
-    end
-end
-
-kb_stats(node) = kb_stats(stdout, node)
 
