@@ -28,7 +28,7 @@ Rete.askc(f::typeof(counting), kb::ReteRootNode, q::Type) =
 
 
 """
-    collecting(body)
+    collecting(body, t::Type = Any)
 
 runs `body`, passing it a continuation of one argument that collects the
 values it's called with. `collecting` returns those values.
@@ -36,8 +36,8 @@ values it's called with. `collecting` returns those values.
 As a special case, you can pass `collecting` as the `continuation`
 argument to `askc` to perform the `collecting` aggregation.
 """
-function collecting(body)
-    results = []
+function collecting(body::Function, t::Type = Any)
+    results = Vector{t}()
     function collect(thing)
         push!(results, thing)
     end
