@@ -19,6 +19,15 @@ end
     @test c == Vector{Any}(1:4)
 end
 
+@testset "test collectin typeg" begin
+    c = collecting(Int) do c
+        for x in 1:4
+            c(x)
+        end
+    end
+    @test c == Vector{Int}(1:4)
+end
+
 @testset "Node connection test" begin
     n1 = ReteRootNode("node 1")
     n2 = ReteRootNode("node 2")
