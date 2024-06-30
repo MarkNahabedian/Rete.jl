@@ -2,30 +2,30 @@ using Rete
 using Test
 
 @testset "test counting" begin
-    c = counting() do c
+    count = Counter()() do c
         for x in 1:20
             c(x)
         end
     end
-    @test c == 20
+    @test count == 20
 end
 
 @testset "test collecting" begin
-    c = collecting() do c
+    v = Collector{Any}()() do c
         for x in 1:4
             c(x)
         end
     end
-    @test c == Vector{Any}(1:4)
+    @test v == Vector{Any}(1:4)
 end
 
-@testset "test collectin typeg" begin
-    c = collecting(Int) do c
+@testset "test collectin type" begin
+    v = Collector{Int}()() do c
         for x in 1:4
             c(x)
         end
     end
-    @test c == Vector{Int}(1:4)
+    @test v == Vector{Int}(1:4)
 end
 
 @testset "Node connection test" begin
@@ -95,9 +95,7 @@ end
     for i in 1:3
         receive(root, i)
     end
-    results = collecting() do c
-        askc(c, conclusions)
-    end
+    results = askc(Collector{Any}(), conclusions)
     @test sort(results) ==
         sort(["a1", "b1", "c1", "a2", "b2", "c2", "a3", "b3", "c3"])
     let
@@ -128,9 +126,7 @@ end
     for i in 1:5
         receive(root, i)
     end
-    results = collecting() do c
-        askc(c, conclusions)
-    end
+    results = askc(Collector{Any}(), conclusions)
     @test sort(results) ==
         sort([(1, 2), (2, 3), (3, 4), (4, 5)])
 end
@@ -160,13 +156,9 @@ end
     for c in 'a':'b'
         receive(root, c)
     end
-    results = collecting() do c
-        askc(c, conclusions)
-    end
+    results = askc(Collector{Any}(), conclusions)
     @test sort(results) == sort(["1a2", "2a1", "1b2", "2b1"])
-    all_facts = collecting() do c
-        askc(c, root.outputs)
-    end
+    all_facts = askc(Collector{Any}(), root.outputs)
     all_facts = sort(all_facts; by = string)
     @test all_facts == [1, "1a2", "1b2", 2, "2a1", "2b1", 'a', 'b']
 end

@@ -1,54 +1,5 @@
 
-export counting, collecting, kb_counts, kb_stats, copy_facts
-
-
-"""
-    counting(body)
-
-Runs `body`, passing it a continuation of one argument (which is
-ignored), that counts the number of times the continuation is called.
-One `body` is fnished, `counting` returns that count.
-
-As a special case, you can pass `counting` as the `continuation`
-argument to `askc` to perform the `counting` aggregation.
-"""
-function counting(body)
-    count = 0
-    function counter(_)
-        count += 1
-    end
-    body(counter)
-    count
-end
-
-Rete.askc(f::typeof(counting), kb::ReteRootNode, q::Type) =
-    f() do c
-        askc(c, kb, q)
-    end
-
-
-"""
-    collecting(body, t::Type = Any)
-
-runs `body`, passing it a continuation of one argument that collects the
-values it's called with. `collecting` returns those values.
-
-As a special case, you can pass `collecting` as the `continuation`
-argument to `askc` to perform the `collecting` aggregation.
-"""
-function collecting(body::Function, t::Type = Any)
-    results = Vector{t}()
-    function collect(thing)
-        push!(results, thing)
-    end
-    body(collect)
-    results
-end
-
-Rete.askc(f::typeof(collecting), kb::ReteRootNode, q::Type) =
-    f() do c
-        askc(c, kb, q)
-    end
+export kb_counts, kb_stats, copy_facts
 
 
 """

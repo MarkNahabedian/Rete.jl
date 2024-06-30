@@ -8,6 +8,7 @@ include("memory_nodes.jl")
 include("join_nodes.jl")
 include("backward.jl")
 include("rules.jl")
+include("aggregation.jl")
 include("utils.jl")
 
 end

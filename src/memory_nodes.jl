@@ -66,21 +66,21 @@ function receive(node::IsaMemoryNode{T}, fact::T) where{T}
 end
 
 
-function askc(continuation, node::IsaMemoryNode)
+function askc(continuation::Function, node::IsaMemoryNode)
     for fact in node.memory
         continuation(fact)
     end
 end
 
 """
-    askc(continuation, root::ReteRootNode, t::Type)
+    askc(continuation::Function, root::ReteRootNode, t::Type)
 
 calls `continuation` on every fact of the specified type (or its
 subtypes) that are stored in the network rooted at `root`.
 
 Assumes all memory nodes are direct outputs of `root`.
 """
-function askc(continuation, root::ReteRootNode, t::Type)
+function askc(continuation::Function, root::ReteRootNode, t::Type)
     for o in root.outputs
         if o isa IsaMemoryNode
             if length(typeof(o).parameters) == 1

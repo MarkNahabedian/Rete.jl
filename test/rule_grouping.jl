@@ -23,9 +23,7 @@ end
     for i in 1:3
         receive(root, i)
     end
-    results = collecting() do c
-        askc(c, root, String)
-    end
+    results = askc(Collector{Any}(), root, String)
     @test sort(results) ==
         sort([
             "a1b", "a2b", "a3b",

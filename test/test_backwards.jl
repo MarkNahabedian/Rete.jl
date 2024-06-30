@@ -8,9 +8,7 @@
     for i in 1:10
         receive(root, i)
     end
-    filtered = collecting() do c
-        askc(c, even)
-    end
+    filtered = askc(Collector{Any}(), even)
     @test sort(filtered) == [2, 4, 6, 8, 10]
     let
         @test input_count(even) == 1
@@ -30,9 +28,7 @@ end
     for i in 1:10
         receive(root, i)
     end
-    extreme = collecting() do c
-        askc(c, maxval)
-    end
+    extreme = askc(Collector{Any}(), maxval)
     @test extreme == [10]
     let
         @test input_count(maxval) == 1

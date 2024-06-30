@@ -102,9 +102,7 @@ for c in 'a':'e'
     receive(root, c)
 end
 
-collecting() do c
-    askc(c, root, String)
-end
+askc(Collector{String}(), root, String)
 ```
 
 
@@ -118,6 +116,54 @@ There is not yet any facility to make it easier to integrate these
 nodes into the network.  You will need to use the node constructors
 and [`connect`](@ref) to add them by hand.
 
+
+
+## Querying and Aggregation
+
+The function [`askc`](@ref) can be used to query the network.  `askc`
+takes either a continuation function or an [`Aggregator`](@ref) as its
+first argument.
+
+`askc` also takes either a node that supports it, e.g. memory nodes or
+backweard chaining nodes; or a [`ReteRootNode`](@ref) representing
+your knowledge base, and a fact type.
+
+The continuation finction is callled on each fact that `askc` finds.
+
+If an aggregator is passed as the first argument then it will perform
+the specified aggregation over the course of the query and that call
+to `askc` will return the aggregation result.
+
+The currenty supported aggregators are:
+
+- [`Counter`](@ref)
+- [`Collector`](@ref)
+
+```@example aggewgation
+using Rete
+kb = ReteRootNode("My Knowledge Base")
+connect(kb, IsaMemoryNode{Int}())
+receive.([kb], 1:5)
+nothing
+```
+
+```@example aggewgation
+askc(Counter(), kb, Int)
+```
+
+```@example aggewgation
+askc(Collector{Int}(), kb, Int)
+```
+
+```@example aggewgation
+let
+    sum = 0
+    askc(kb, Int) do i
+        sum += i
+    end
+    sum
+end
+```
 
 
 ## Index

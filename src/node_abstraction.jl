@@ -82,7 +82,7 @@ node's memory, otherwise return `nothing`.
 fact_count(node::AbstractReteNode) = nothing
 
 function fact_count(node::AbstractMemoryNode)
-    counting() do c
+    Counter()() do c
         askc(c, node)
     end
 end
@@ -130,14 +130,14 @@ end
 
 
 """
-    askc(continuation, node)
+    askc(continuation::Function, node)
 
 Calls `continuation` on each *fact* available from `node`.
 """
 function askc end
 
 
-function askc(continuation, s::Set{<:AbstractReteNode})
+function askc(continuation::Function, s::Set{<:AbstractReteNode})
     for input in s
         askc(input) do fact
             continuation(fact)

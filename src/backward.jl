@@ -41,7 +41,7 @@ outputs(node::BackwardFilterNode) = node.outputs
 label(node::BackwardFilterNode) = node.label
 
 
-function askc(continuation, node::BackwardFilterNode)
+function askc(continuation::Function, node::BackwardFilterNode)
     for input in node.inputs
         askc(input) do fact
             if node.predicate(fact)
@@ -82,7 +82,7 @@ outputs(node::BackwardExtremumNode) = node.outputs
 label(node::BackwardExtremumNode) = node.label
 
 
-function askc(continuation, node::BackwardExtremumNode)
+function askc(continuation::Function, node::BackwardExtremumNode)
     extremum = nothing
     for input in node.inputs
         askc(input) do fact
