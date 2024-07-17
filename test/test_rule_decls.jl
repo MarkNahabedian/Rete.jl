@@ -83,7 +83,7 @@ end
     end
     @test 3 == askc(Counter(), root, Char)
     @test 9 == askc(Counter(), root, String)
-    results = askc(Collector{Any}(), root, String)
+    results = askc(Collector{String}(), root)
     @test length(filter(results) do r
                      occursin("_FT", r)
                  end) == 9
@@ -108,7 +108,7 @@ end
     for i in 1:3
         receive(root, i)
     end
-    results = askc(Collector{Any}(), root, String)
+    results = askc(Collector{String}(), root)
     @test length(results) == 9
 end
 

@@ -61,3 +61,9 @@ function aggregate(a::Collector, thing)
     push!(a.collection, thing)
 end
 
+# We can infer the query type from the Collector:
+function askc(a::Collector{T}, kb::ReteRootNode) where T
+    askc(x -> aggregate(a, x), kb, T)
+    value(a)
+end
+
