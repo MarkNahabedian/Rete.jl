@@ -15,7 +15,8 @@ joins, and backward chaining filter and extrema operations.
 The *facts* in our reasoning system can be arbitrary Julia objects.
 It's best to restrict *facts* to immutable objects though so that they
 can't be altered once they're stored in the network or conclusions
-have been made.
+have been made.  There is no mechanism for retracting a conclusion if
+a fact is altered.
 
 
 ## The Network
@@ -72,14 +73,14 @@ method, which calls [`receive`](@ref) for each of the node's outputs.
 The [`@rule`](@ref) macro makes it easier to create rules and add them
 to a Rete.
 
-As a contried exanple, lets create a network that creates pairs of
+As a contrived exanple, lets create a network that creates pairs of
 letters when the second letter in the pair is the next letter of the
 alphabet from the first.
 
 ```@example rule1
 using Rete
 
-@rule PairConectutiveLetters(a::Char, b::Char, ::String) begin
+@rule PairConsectutiveLetters(a::Char, b::Char, ::String) begin
     if codepoint(a) + 1 == codepoint(b)
         emit(a * b)
     end
@@ -87,22 +88,22 @@ end
 ```
 
 [`@rule`](@ref) will define a singleton type named
-`PairConectutiveLetters` to represent the rule.  `@rule` defines an
+`PairConsectutiveLetters` to represent the rule.  `@rule` defines an
 `install` method that will add the rule to a network.  The instance of
-`PairConectutiveLetters` implements the join function of the JoinNode.
+`PairConsectutiveLetters` implements the join function of the JoinNode.
 
 
 ```@example rule1
 # Create the knowledgebase:
 root = ReteRootNode("root")
-install(root, PairConectutiveLetters())
+install(root, PairConsectutiveLetters())
 
 # Assert the characters 'a' through 'e' into the knowledgebase:
 for c in 'a':'e'
     receive(root, c)
 end
 
-askc(Collector{String}(), root, String)
+askc(Collector{String}(), root)
 ```
 
 
@@ -152,8 +153,10 @@ askc(Counter(), kb, Int)
 ```
 
 ```@example aggewgation
-askc(Collector{Int}(), kb, Int)
+askc(Collector{Int}(), kb)
 ```
+
+Note that `askc` can infer its third argument from the `Collector`.
 
 ```@example aggewgation
 let
