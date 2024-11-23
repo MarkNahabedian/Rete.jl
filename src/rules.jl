@@ -23,7 +23,7 @@ function exttract_rule_declarations(body::Expr)
     forward_triggers = []
     custom_install = false
     decl_expr = nothing
-    # If the first non-LineNumberNode is a RULE_DECLARATION
+    # If the first non-LineNumberNode is a RULE_DECLARATIONS
     # expression, then process it:
     for expr in body.args
         if isline(expr)
@@ -73,13 +73,13 @@ types of facts that the rule might assert.  Memory nodes for these
 types will be added to the Rete if not already present.
 
 The first expression of the rule can be call-like expression of
-RULE_DECLARATION.  Its "parameters" can be declarations of one of the
+RULE_DECLARATIONS.  Its "parameters" can be declarations of one of the
 forms
 
 ` `FORWARD_TRIGGERS(argument_names...)`
 
 Only the inputs for the specified argument names will serve as forward
-triggers.  For backward compatibility, if there is no RULE_DECLARATION
+triggers.  For backward compatibility, if there is no RULE_DECLARATIONS
 expression then all inputs are forward triggers.
 
 
@@ -128,7 +128,7 @@ macro rule(call, body)
             end
         end
         error("There is no rule parameter named $argname " *
-            "matching a specified FORWARD_TRIGGER")
+            "matching a specified FORWARD_TRIGGERS")
     end
     forward_triggers = []
     if rule_decls.has_decls
