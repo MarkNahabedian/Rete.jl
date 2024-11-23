@@ -3,7 +3,8 @@ module Rete
 using InteractiveUtils
 
 include("node_abstraction.jl")
-include("basic_node.jl")
+include("sets_as_inputs_and_outputs.jl")
+include("root_nodes.jl")
 include("memory_nodes.jl")
 include("join_nodes.jl")
 include("backward.jl")

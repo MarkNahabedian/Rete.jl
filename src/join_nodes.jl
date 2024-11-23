@@ -40,7 +40,7 @@ label(n::JoinNode) = n.label
 function connect(from::AbstractReteNode, to::JoinNode, input::Int)
     @assert input >= 1
     @assert input <= length(to.inputs)
-    push!(from.outputs, to)
+    _add_output(from, to)
     push!(to.inputs[input], from)
 end
 

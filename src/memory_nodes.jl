@@ -21,8 +21,8 @@ IsaMemoryNode is a type of memory node that only stores facts of the
 specified type.  Facts of other types are ignored.
 """
 struct IsaMemoryNode{T} <: AbstractMemoryNode
-    inputs::Set{<:AbstractReteNode}
-    outputs::Set{<:AbstractReteNode}
+    inputs::Set{AbstractReteNode}
+    outputs::Set{AbstractReteNode}
     # Prseserve insertion order for debugging:
     memory::OrderedSet{T}
 

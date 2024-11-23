@@ -2,7 +2,7 @@
 using Printf
 
 export AbstractReteNode, AbstractMemoryNode, AbstractReteJoinNode
-export label, inputs, outputs, connect, emit, receive, install
+export label, inputs, outputs, emit, receive, install
 export input_count, output_count, fact_count
 export askc, walk_by_outputs
 
@@ -112,21 +112,6 @@ An application calls `receive` on the root node to assert a new fact
 to the network.
 """
 function receive end
-
-
-"""
-    connect(from, to)
-
-makes `to` an output of `from` and `from` an input of `to`.
-
-When `to` is a join node then a third parameter (a positive integer)
-identifies which parameter position `from` feed in to.
-"""
-function connect(from::AbstractReteNode, to::AbstractReteNode)
-    push!(from.outputs, to)
-    push!(to.inputs, from)
-    nothing
-end
 
 
 """
