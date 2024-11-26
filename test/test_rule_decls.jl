@@ -34,10 +34,10 @@ end
     got_with = false
     got_without = false
     for m in methods(install)
-        if hasproperty(m.sig, :parameters)
-            if m.sig.parameters[3] == RuleWithoutCustomInstall
+        if hasproperty(m.sig, :parameters) && length(m.sig.parameters) >= 4
+            if m.sig.parameters[4] == RuleWithoutCustomInstall
                 got_without = true
-            elseif m.sig.parameters[3] == RuleWithCustomInstall
+            elseif m.sig.parameters[4] == RuleWithCustomInstall
                 got_with = true
             end
         end

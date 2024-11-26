@@ -1,6 +1,6 @@
 # The root node of a Rete
 
-export CanInstallRulesTrait, ReteRootNode
+export CanInstallRulesTrait, AbstractReteRootNode, ReteRootNode
 
 
 """
@@ -26,15 +26,24 @@ Installs the rule or rule group into the Rete rooted at `root`.
 install(root::T, rule::Type) where T =
     install(CanInstallRulesTrait(T), root, rule)
 
-function install(::CanInstallRulesTrait, root, rule_group::Type)
+function install(trait::CanInstallRulesTrait, root, rule_group::Type)
     if isconcretetype(rule_group)
-        install(root, rule_group())
+        install(trait, root, rule_group())
     else
         for r in subtypes(rule_group)
-            install(root, r)
+            install(trait, root, r)
         end
     end
 end
+
+
+"""
+    AbstractReteRootNode
+
+AbstractReteRootNode is the abstract supertype for all root nodes of a
+Rete.
+"""
+abstract type AbstractReteRootNode <: AbstractReteNode end
 
 
 """
@@ -43,9 +52,9 @@ end
 ReteRootNode serves as the root node of a Rete network.
 
 If you need a specialized root node for your application, see
-[`CanInstallRulesTrait`](@ref).
+[`AbstractReteRootNode`](@ref) and [`CanInstallRulesTrait`](@ref).
 """
-struct ReteRootNode <: AbstractReteNode
+struct ReteRootNode <: AbstractReteRootNode
     inputs::Set{AbstractReteNode}
     outputs::Set{AbstractReteNode}
     label::String
@@ -57,7 +66,7 @@ struct ReteRootNode <: AbstractReteNode
     end
 end
 
-CanInstallRulesTrait(::Type{<:ReteRootNode}) = CanInstallRulesTrait()
+CanInstallRulesTrait(::Type{ReteRootNode}) = CanInstallRulesTrait()
 
 inputs(node::ReteRootNode) = node.inputs
 
@@ -65,7 +74,7 @@ outputs(node::ReteRootNode) = node.outputs
 
 label(node::ReteRootNode) = node.label
 
-function receive(node::ReteRootNode, fact)
+function receive(node::AbstractReteRootNode, fact)
     emit(node, fact)
 end
 

@@ -16,7 +16,7 @@ function askc(a::Aggregator, source)
     value(a)
 end
 
-function askc(a::Aggregator, kb::ReteRootNode, t::Type)
+function askc(a::Aggregator, kb::AbstractReteRootNode, t::Type)
     askc(x -> aggregate(a, x), kb, t)
     value(a)
 end
@@ -62,7 +62,7 @@ function aggregate(a::Collector, thing)
 end
 
 # We can infer the query type from the Collector:
-function askc(a::Collector{T}, kb::ReteRootNode) where T
+function askc(a::Collector{T}, kb::AbstractReteRootNode) where T
     askc(x -> aggregate(a, x), kb, T)
     value(a)
 end

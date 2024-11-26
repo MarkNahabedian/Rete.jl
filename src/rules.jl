@@ -169,7 +169,8 @@ macro rule(call, body)
     install_method = []
     if !rule_decls.custom_install
         push!(install_method,
-              :(function Rete.install(root::ReteRootNode, ::$rule_name)
+              :(function Rete.install(::CanInstallRulesTrait,
+                                      root, ::$rule_name)
                     join = JoinNode($rule_name_str,
                                     $(length(input_exprs)),
                                     $rule_name())

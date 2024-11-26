@@ -51,7 +51,7 @@ is_memory_for_type(node::IsaMemoryNode, typ::Type)::Bool =
     typ == typeof(node).parameters[1]
 
 
-function receive(node::IsaMemoryNode, fact)
+function receive(node::AbstractMemoryNode, fact)
     # Ignore facts not relevant to this memory node.
 end
 
@@ -73,14 +73,14 @@ function askc(continuation::Function, node::IsaMemoryNode)
 end
 
 """
-    askc(continuation::Function, root::ReteRootNode, t::Type)
+    askc(continuation::Function, root::AbstractReteRootNode, t::Type)
 
 calls `continuation` on every fact of the specified type (or its
 subtypes) that are stored in the network rooted at `root`.
 
 Assumes all memory nodes are direct outputs of `root`.
 """
-function askc(continuation::Function, root::ReteRootNode, t::Type)
+function askc(continuation::Function, root::AbstractReteRootNode, t::Type)
     for o in root.outputs
         if o isa IsaMemoryNode
             if length(typeof(o).parameters) == 1
@@ -100,8 +100,9 @@ If there's a memory node in the Rete represented by `root` that stores
 objects of the specified type then return it.  Otherwise return
 nothing.
 """
-function find_memory_for_type(root::ReteRootNode,
+function find_memory_for_type(root::AbstractReteRootNode,
                               typ::Type)::Union{Nothing, AbstractMemoryNode}
+    
     for o in root.outputs
         if is_memory_for_type(o, typ)
             return o
@@ -112,7 +113,7 @@ end
 
 
 """
-    ensure_memory_node(root::ReteRootNode, typ::Type)::IsaTypeNode
+    ensure_memory_node(root::AbstractReteRootNode, typ::Type)::IsaTypeNode
 
 Find a memory node for the specified type, or make one and add it
 to the network.
@@ -121,7 +122,8 @@ The default is to make an IsaMemoryNode.  Specialize this function for
 a `Type` to control what type of memory node should be used for that
 type.
 """
-function ensure_memory_node(root::ReteRootNode, typ::Type)::AbstractMemoryNode
+function ensure_memory_node(root::AbstractReteRootNode,
+                            typ::Type)::AbstractMemoryNode
     n = find_memory_for_type(root, typ)
     if n !== nothing
         return n
