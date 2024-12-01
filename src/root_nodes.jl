@@ -59,6 +59,8 @@ struct ReteRootNode <: AbstractReteRootNode
     outputs::Set{AbstractReteNode}
     label::String
 
+    ReteRootNode() = ReteRootNode("root")
+
     function ReteRootNode(label::String)
         new(Set{AbstractReteNode}(),
             Set{AbstractReteNode}(),

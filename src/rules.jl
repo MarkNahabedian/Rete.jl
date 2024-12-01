@@ -9,6 +9,10 @@ Rule is an abstract supertype for all rules.
 abstract type Rule end
 
 
+install(root::T, rule::Rule) where T =
+    install(CanInstallRulesTrait(T), root, (typeof(rule)))
+
+
 """
     emits(rule::Type)
 
