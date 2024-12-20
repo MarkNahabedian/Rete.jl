@@ -16,6 +16,10 @@ function askc(a::Aggregator, source)
     value(a)
 end
 
+# There are some gaps in the askc implementation, for example, neither
+# askc(continuation, root::AbstractReteRootNode, t::Type) nor
+# askc(continuation::Function, s::Set{<:AbstractReteNode}) return a
+# value.
 function askc(a::Aggregator, kb::AbstractReteRootNode, t::Type)
     askc(x -> aggregate(a, x), kb, t)
     value(a)

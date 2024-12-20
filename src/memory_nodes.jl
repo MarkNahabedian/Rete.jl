@@ -48,8 +48,10 @@ returns `true` if `node` stores objects of the specified type.
 Used by [`find_memory_for_type`](@ref).
 """
 is_memory_for_type(node::IsaMemoryNode, typ::Type)::Bool =
-    typ == typeof(node).parameters[1]
+    typeof(node).parameters[1] <: typ
 
+
+Rete.is_memory_for_type(::AbstractMemoryNode, ::Any) = false
 
 function receive(node::AbstractMemoryNode, fact)
     # Ignore facts not relevant to this memory node.
@@ -73,21 +75,19 @@ function askc(continuation::Function, node::IsaMemoryNode)
 end
 
 """
-    askc(continuation::Function, root::AbstractReteRootNode, t::Type)
+    askc(continuation, root::AbstractReteRootNode, t::Type)
 
 calls `continuation` on every fact of the specified type (or its
 subtypes) that are stored in the network rooted at `root`.
 
 Assumes all memory nodes are direct outputs of `root`.
+
+Also assumes that every output of `root` implements `is_memory_for_type`.
 """
-function askc(continuation::Function, root::AbstractReteRootNode, t::Type)
+function askc(continuation, root::AbstractReteRootNode, t::Type)
     for o in root.outputs
-        if o isa IsaMemoryNode
-            if length(typeof(o).parameters) == 1
-                if typeof(o).parameters[1] <: t
-                    askc(continuation, o)
-                end
-            end
+        if is_memory_for_type(o, t)
+            askc(continuation, o)
         end
     end
 end
@@ -102,7 +102,6 @@ nothing.
 """
 function find_memory_for_type(root::AbstractReteRootNode,
                               typ::Type)::Union{Nothing, AbstractMemoryNode}
-    
     for o in root.outputs
         if is_memory_for_type(o, typ)
             return o

@@ -35,7 +35,7 @@ inputs \toutputs \tfacts \tlabel
     for c in 'a':'g'
         receive(root, c)
     end
-    results = askc(Collector{Any}(), root, String)
+    results = askc(Collector{String}(), root)
     @test sort(results) ==
         sort(["abc", "bcd", "cde", "def", "efg"])
     # Test askc for subtypes:
