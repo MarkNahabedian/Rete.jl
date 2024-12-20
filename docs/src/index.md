@@ -80,7 +80,7 @@ alphabet from the first.
 ```@example rule1
 using Rete
 
-@rule PairConsectutiveLetters(a::Char, b::Char, ::String) begin
+@rule PairConsectutiveLettersRule(a::Char, b::Char, ::String) begin
     if codepoint(a) + 1 == codepoint(b)
         emit(a * b)
     end
@@ -88,7 +88,7 @@ end
 ```
 
 [`@rule`](@ref) will define a singleton type named
-`PairConsectutiveLetters` to represent the rule.  `@rule` defines an
+`PairConsectutiveLettersRule` to represent the rule.  `@rule` defines an
 `install` method that will add the rule to a network.  The instance of
 `PairConsectutiveLetters` implements the join function of the JoinNode.
 
@@ -96,7 +96,7 @@ end
 ```@example rule1
 # Create the knowledgebase:
 root = ReteRootNode("root")
-install(root, PairConsectutiveLetters())
+install(root, PairConsectutiveLettersRule())
 
 # Assert the characters 'a' through 'e' into the knowledgebase:
 for c in 'a':'e'
@@ -126,14 +126,17 @@ takes either a continuation function or an [`Aggregator`](@ref) as its
 first argument.
 
 `askc` also takes either a node that supports it, e.g. memory nodes or
-backweard chaining nodes; or a [`ReteRootNode`](@ref) representing
-your knowledge base, and a fact type.
+backweard chaining nodes; or an [`AbstractReteRootNode`](@ref)
+representing your knowledge base, and a fact type.  In this latter
+case, [`is_memory_for_type`](@ref) is appled to each output of the
+root node to find memory nodes which store the specified type.
 
-The continuation finction is callled on each fact that `askc` finds.
+The continuation function is callled on each fact that `askc` finds.
 
-If an aggregator is passed as the first argument then it will perform
-the specified aggregation over the course of the query and that call
-to `askc` will return the aggregation result.
+Normally, askc has no return value.  If an aggregator is passed as the
+first argument then it will perform the specified aggregation over the
+course of the query and that call to `askc` will return the
+aggregation result.
 
 The currenty supported aggregators are:
 
@@ -156,15 +159,84 @@ askc(Counter(), kb, Int)
 askc(Collector{Int}(), kb)
 ```
 
-Note that `askc` can infer its third argument from the `Collector`.
+Note from the latter example that `askc` can infer the fact type
+argument from the `Collector`.
 
-```@example aggewgation
-let
-    sum = 0
-    askc(kb, Int) do i
-        sum += i
-    end
-    sum
+
+## Customization
+
+All custom node types are expected to inherit from [`AbstractReteNode`](@ref).
+
+We provide some support for the definition of custom node types.
+
+
+### Connectivity
+
+The discrimination network is built from nodes using [`connect`](@ref).
+
+Most node types have a single set of inputs and single set of outputs.
+
+To simplify node customization, any subtype of
+[`AbstractReteMode`](@ref) that includes the field definition
+
+```
+    inputs::Set{AbstractReteNode}
+ ```
+
+will be given the [`HasSetOfInputsTrait`](@ref) trait, and as such can
+serve as an output for other nodes without additional method support.
+
+Any subtype of [`AbstractReteMode`](@ref) that includes the field definition
+
+```
+    outputs::Set{AbstractReteNode}
+ ```
+
+will be given the [`HasSetOfOutputsTrait`](@ref) trait, and as such can
+serve as an input for other nodes without additional method support.
+
+This is suitable for most nodes where all of the inputs receive the
+same treatment, but is not suitable for join nodes, which inherently
+have multiple sets of inputs of different types that are treated
+differently.  Currently there is no customization support for join
+nodes.
+
+
+### Custom Root Nodes
+
+All custom root nodes are expected to inherit from
+[`AbstractReteRootNode`](@ref).
+
+Custom root nodes should also be given the
+[`CanInstallRulesTrait`](@ref) trait:
+
+```
+Rete.CanInstallRulesTrait(::Type{<:MyKindOfRootNode}) = CanInstallRulesTrait()
+```
+
+
+### Custom Memory Nodes
+
+You might find it useful to define your own type of memory node.  All
+such types should inherit from [`AbstractMemoryNode`](@ref).
+
+Each custom memory node will need to implement [`receive`](@ref) to
+store a new fact in that node.  It will also need a custom method for
+[`askc`](@ref).
+
+Custom memory nodes should have their own [`is_memory_for_type`](@ref) method.
+
+Normally, memory nodes are created by [`ensure_memory_node`](@ref)
+when a type appears as the input or output of a rule and the network
+does not yet include a memory for that type.  Some applications might
+include references to custom memory node types in a custom root node.
+It this case, it is helpful to define a method for
+[`find_memory_for_type`](@ref)
+
+```
+function Rete.find_memory_for_type(root::MyTypeOfRootNode,
+                                   typ::Type{MyTypeThatNeedsACustomMemoryNode})
+    # code to return the custom memory node for MyTypeThatNeedsACustomMemoryNode.
 end
 ```
 
