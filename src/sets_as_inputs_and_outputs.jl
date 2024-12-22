@@ -35,7 +35,7 @@ adds `from` as an input to `to`.
 
 User code should never call `_add_input` directly, only through
 `connect`.  Users might specialize `_add_input` if implementing a node
-that needs to specialize how it storesa its inputs.
+that needs to specialize how it stores its inputs.
 """
 function _add_input end
 
@@ -47,7 +47,7 @@ adds `to` as an output of `from`.
 
 User code should never call `_add_output` directly, only through
 `connect`.  Users might specialize `_add_output` if implementing a
-node that needs to specialize how it storesa its outputs.
+node that needs to specialize how it stores its outputs.
 """
 function _add_output end
 
