@@ -66,17 +66,30 @@ connections to a Rete to implement the rule.
 
 The default supertype of a rule struct is `Rule`.  When it is
 desirable to group rules together, one can define an abstract type
-that is a type descendant of Rule and use that as a dotted prefix to
-`RuleName`.  The `RuleName` in the @rule invocation is
-`MyGroup.MyRule` then the supertype of MyRule will be MyGroup, rather
+that is a type descendant of [`Rule`](@ref) and use that as a dotted
+prefix to `RuleName`.  The `RuleName` in the @rule invocation is
+`MyGroup.MyRule` then the supertype of MyRule will be `MyGroup`, rather
 than [`Rule`](@ref).
 
 A rule can have arbitrarily many parameters.  The parameter list can
 also include clauses with no variable name.  Such clauses identify the
 types of facts that the rule might assert.  Memory nodes for these
-types will be added to the Rete if not already present.
+types will be added to the Rete if not already present.  They will be
+added by the automatically generated `install` method.  See
+CUSTOM_INSTALL below.
 
-The first expression of the rule can be call-like expression of
+The body of the `@rule` expression implements the behavior of the
+rule.  It can perform any tests that are necessary to determine which,
+if any facts should be asserted.  This code is included in a function
+that has the same name as the rule itself.  This function is used as
+the `join_function` of the [`JoinNode`](@ref) that implements the
+rule.  The function declares a keyword argument named `emit` whose
+default value calls [`emit`](@ref). For testing and debugging
+purposes, the rule function can be invoked from the Julia REPL, perhaps
+passing `emit=println` to try the rule function independent of the
+rest of the network.
+
+The first expression of the rule can be a call-like expression of
 RULE_DECLARATIONS.  Its "parameters" can be declarations of one of the
 forms
 
@@ -85,7 +98,6 @@ forms
 Only the inputs for the specified argument names will serve as forward
 triggers.  For backward compatibility, if there is no RULE_DECLARATIONS
 expression then all inputs are forward triggers.
-
 
 ` `CUSTOM_INSTALL()`
 
@@ -162,14 +174,6 @@ macro rule(call, body)
     arg_decls = map(1:length(input_exprs)) do i
         :($(input_var(i))::$(input_type(i)))
     end
-    # Add the node argument to all calls to emit:
-    body = postwalk(body) do e
-        if isexpr(e, :call) && e.args[1] == :emit
-            Expr(:call, :emit, :node, e.args[2])
-        else
-            e
-        end
-    end
     install_method = []
     if !rule_decls.custom_install
         push!(install_method,
@@ -188,7 +192,9 @@ macro rule(call, body)
         struct $rule_name <: $supertype end
         Rete.emits(::Type{$rule_name}) = tuple($(output_types...))
         $(install_method...)
-        function(::$rule_name)(node::JoinNode, $(arg_decls...))
+        function(::$rule_name)(__NODE__::JoinNode,
+                               $(arg_decls...);
+                               emit = fact -> emit(__NODE__, fact))
             $body
         end
     end)
