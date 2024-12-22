@@ -246,7 +246,7 @@ end
 ```@index
 ```
 
-## Glossary
+## Definitions
 
 ```@autodocs
 Modules = [Rete]
