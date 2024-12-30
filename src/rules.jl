@@ -96,8 +96,11 @@ forms
 ` `FORWARD_TRIGGERS(argument_names...)`
 
 Only the inputs for the specified argument names will serve as forward
-triggers.  For backward compatibility, if there is no RULE_DECLARATIONS
+triggers.  For backward compatibility, if there is no `RULE_DECLARATIONS`
 expression then all inputs are forward triggers.
+
+Note that if a `RULE_DECLARATIONS` clause is included then any forwarde
+triggers must be explicitly declared.
 
 ` `CUSTOM_INSTALL()`
 

@@ -71,6 +71,7 @@ is_forward_trigger(n::JoinNode, from::AbstractReteNode) =
 
 function receive(node::JoinNode, fact, from::AbstractMemoryNode)
     args = Vector(undef, length(node.inputs))
+    # The argument position that is providing this fact:
     last_from_pos = findlast(map(i -> from in i, node.inputs))
     function helper(argnumber, hasfact)
         if argnumber > length(args)
