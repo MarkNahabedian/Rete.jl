@@ -218,7 +218,8 @@ Rete.CanInstallRulesTrait(::Type{<:MyKindOfRootNode}) = CanInstallRulesTrait()
 ### Custom Memory Nodes
 
 You might find it useful to define your own type of memory node.  All
-such types should inherit from [`AbstractMemoryNode`](@ref).
+such types should inherit from [`AbstractMemoryNode`](@ref).  See its
+documentation for general requirements on memory nodes.
 
 Each custom memory node will need to implement [`receive`](@ref) to
 store a new fact in that node.  It will also need a custom method for
@@ -251,3 +252,4 @@ end
 ```@autodocs
 Modules = [Rete]
 ```
+
