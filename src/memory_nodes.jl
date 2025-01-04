@@ -44,11 +44,12 @@ label(node::IsaMemoryNode{T}) where {T} = "isa $T memory"
     is_memory_for_type(node, typ::Type)::Bool
 
 returns `true` if `node` stores objects of the specified type.
+`typ` must batch the type stured by `node`, not merely be a subtype.
 
 Used by [`find_memory_for_type`](@ref).
 """
 is_memory_for_type(node::IsaMemoryNode, typ::Type)::Bool =
-    typeof(node).parameters[1] <: typ
+    typeof(node).parameters[1] == typ
 
 
 Rete.is_memory_for_type(::AbstractMemoryNode, ::Any) = false
@@ -77,8 +78,12 @@ end
 """
     askc(continuation, root::AbstractReteRootNode, t::Type)
 
-calls `continuation` on every fact of the specified type (or its
-subtypes) that are stored in the network rooted at `root`.
+calls `continuation` on every fact of the specified type that are
+stored in the network rooted at `root`.
+
+Does not consider subtypes because that could lead to `continuation`
+being called on the same fact more than once (from the memory node for
+the type itself and from the memory nodes of subtypes).
 
 Assumes all memory nodes are direct outputs of `root`.
 

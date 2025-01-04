@@ -40,8 +40,10 @@ inputs \toutputs \tfacts \tlabel
         sort(["abc", "bcd", "cde", "def", "efg"])
     # Test askc for subtypes:
     count_by_type = DefaultDict{Type, Int}(0)
-    askc(root, Any) do fact
-        count_by_type[typeof(fact)] += 1
+    for o in root.outputs
+        askc(o) do fact
+            count_by_type[typeof(fact)] += 1
+        end
     end
     @test Set(collect(count_by_type)) ==
         Set([Char => 7,
