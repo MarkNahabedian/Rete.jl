@@ -17,8 +17,11 @@ end
 
 
 """
+    IsaMemoryNode{T}()
+
 IsaMemoryNode is a type of memory node that only stores facts of the
-specified type.  Facts of other types are ignored.
+specified type (or subtype, as tested by `isa`).  Facts of other types
+are ignored.
 """
 struct IsaMemoryNode{T} <: AbstractMemoryNode
     inputs::Set{AbstractReteNode}
@@ -44,21 +47,27 @@ label(node::IsaMemoryNode{T}) where {T} = "isa $T memory"
     is_memory_for_type(node, typ::Type)::Bool
 
 returns `true` if `node` stores objects of the specified type.
-`typ` must batch the type stured by `node`, not merely be a subtype.
 
 Used by [`find_memory_for_type`](@ref).
 """
 is_memory_for_type(node::IsaMemoryNode, typ::Type)::Bool =
-    typeof(node).parameters[1] == typ
+    memory_node_type(node) == typ
 
-
+# Default method:
 Rete.is_memory_for_type(::AbstractMemoryNode, ::Any) = false
+
+
+memory_node_type(node::IsaMemoryNode) = typeof(node).parameters[1]
+
 
 function receive(node::AbstractMemoryNode, fact)
     # Ignore facts not relevant to this memory node.
 end
 
 function receive(node::IsaMemoryNode{T}, fact::T) where{T}
+    if !isa(fact, memory_node_type(node))
+        return
+    end
     if fact in node.memory
         return
     end
@@ -90,11 +99,11 @@ Assumes all memory nodes are direct outputs of `root`.
 Also assumes that every output of `root` implements `is_memory_for_type`.
 """
 function askc(continuation, root::AbstractReteRootNode, t::Type)
-    for o in root.outputs
-        if is_memory_for_type(o, t)
-            askc(continuation, o)
-        end
+    mem = find_memory_for_type(root, t)
+    if mem === nothing
+        error("No memory node for type $t")
     end
+    askc(continuation, mem)
 end
 
 

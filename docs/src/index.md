@@ -16,7 +16,7 @@ The *facts* in our reasoning system can be arbitrary Julia objects.
 It's best to restrict *facts* to immutable objects though so that they
 can't be altered once they're stored in the network or conclusions
 have been made.  There is no mechanism for retracting a conclusion if
-a fact is altered.
+a fact object is modified.
 
 
 ## The Network
@@ -90,7 +90,7 @@ end
 [`@rule`](@ref) will define a singleton type named
 `PairConsectutiveLettersRule` to represent the rule.  `@rule` defines an
 `install` method that will add the rule to a network.  The instance of
-`PairConsectutiveLetters` implements the join function of the JoinNode.
+`PairConsectutiveLettersRule` implements the join function of the JoinNode.
 
 
 ```@example rule1
@@ -128,8 +128,8 @@ first argument.
 `askc` also takes either a node that supports it, e.g. memory nodes or
 backweard chaining nodes; or an [`AbstractReteRootNode`](@ref)
 representing your knowledge base, and a fact type.  In this latter
-case, [`is_memory_for_type`](@ref) is appled to each output of the
-root node to find memory nodes which store the specified type.
+case, [`find_memory_for_type`](@ref) is used to find the appropriate
+memory node for the specified type.
 
 The continuation function is callled on each fact that `askc` finds.
 
@@ -177,7 +177,7 @@ The discrimination network is built from nodes using [`connect`](@ref).
 Most node types have a single set of inputs and single set of outputs.
 
 To simplify node customization, any subtype of
-[`AbstractReteMode`](@ref) that includes the field definition
+[`AbstractReteNode`](@ref) that includes the field definition
 
 ```
     inputs::Set{AbstractReteNode}
@@ -186,7 +186,7 @@ To simplify node customization, any subtype of
 will be given the [`HasSetOfInputsTrait`](@ref) trait, and as such can
 serve as an output for other nodes without additional method support.
 
-Any subtype of [`AbstractReteMode`](@ref) that includes the field definition
+Any subtype of [`AbstractReteNode`](@ref) that includes the field definition
 
 ```
     outputs::Set{AbstractReteNode}
