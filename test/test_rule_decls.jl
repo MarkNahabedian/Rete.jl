@@ -1,8 +1,8 @@
 
-@testset "exttract_rule_declarations" begin
+@testset "extract_rule_declarations" begin
     let
         expr = Meta.parse(""" begin end""")
-        decls = Rete.exttract_rule_declarations(expr)
+        decls = Rete.extract_rule_declarations(expr)
         @test decls.has_decls == false
         @test decls.forward_triggers == []
         @test decls.custom_install == false
@@ -13,7 +13,7 @@
                                  FORWARD_TRIGGERS(a, b),
                                  CUSTOM_INSTALL())
                              end""")
-        decls = Rete.exttract_rule_declarations(expr)
+        decls = Rete.extract_rule_declarations(expr)
         @test decls.has_decls == true
         @test decls.forward_triggers == [:a, :b]
         @test decls.custom_install == true

@@ -21,7 +21,7 @@ Returns a Tuple of the types which `rule` is declared to emit.
 emits(rule) = ()
 
 
-function exttract_rule_declarations(body::Expr)
+function extract_rule_declarations(body::Expr)
     @assert isexpr(body, :block)
     has_decls = false
     forward_triggers = []
@@ -111,7 +111,7 @@ macro rule(call, body)
     if !isexpr(call, :call)
         error("The first expression of rule should look like a call")
     end
-    rule_decls = exttract_rule_declarations(body)
+    rule_decls = extract_rule_declarations(body)
     supertype = Rule
     rule_name = call.args[1]
     if isexpr(rule_name, :(.))
