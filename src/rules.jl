@@ -108,99 +108,13 @@ No `install` method will be automatically generated.  The developer
 must implement an `install` method for this rule.
     """
 macro rule(call, body)
-    if !isexpr(call, :call)
-        error("The first expression of rule should look like a call")
-    end
-    rule_decls = extract_rule_declarations(body)
-    supertype = Rule
-    rule_name = call.args[1]
-    if isexpr(rule_name, :(.))
-        supertype = rule_name.args[1]
-        rule_name = rule_name.args[2].value  # Unwrap QuoteNode
-    end
-    rule_name_str = string(rule_name)
-    input_exprs = []
-    output_types = []
-    for arg in call.args[2:end]
-        @assert isexpr(arg, :(::))
-        if length(arg.args) == 1
-            push!(output_types, arg.args[1])
-        elseif length(arg.args) == 2
-            push!(input_exprs, arg)
-        else
-            error("Unrecognized rule parameter expression $arg")
-        end
-    end
-    sort!(output_types)
-    input_var(i) = input_exprs[i].args[1]
-    input_type(i) = input_exprs[i].args[2]
-    input_connections = map(1:length(input_exprs)) do i
-        :(connect(ensure_memory_node(root, $(input_type(i))),
-                  join, $i))
-    end
-    output_memories = map(t -> :(ensure_memory_node(root, $t)),
-                          output_types)
-    function input_arg_to_type(argname)
-        for ie in input_exprs
-            if ie.args[1] == argname
-                return ie.args[2]
-            end
-        end
-        error("There is no rule parameter named $argname " *
-            "matching a specified FORWARD_TRIGGERS")
-    end
-    forward_triggers = []
-    if rule_decls.has_decls
-        # remove the declarations expression from body:
-        body.args = filter(body.args) do item
-            item != rule_decls.decl_expr
-        end
-        # Create forward triggers as specified
-        for trigger_arg in rule_decls.forward_triggers
-            push!(forward_triggers,
-                  :(add_forward_trigger(
-                      join,
-                      ensure_memory_node(
-                          root,
-                          $(input_arg_to_type(trigger_arg))))))
-        end
-    else
-        # No RULE_DECLARATIONS, implement legacy behavior that all
-        # inputs are forward triggers.
-        for ie in input_exprs
-            push!(forward_triggers,
-                  :(add_forward_trigger(
-                      join,
-                      ensure_memory_node(root, $(ie.args[2])))))
-        end
-    end
-    arg_decls = map(1:length(input_exprs)) do i
-        :($(input_var(i))::$(input_type(i)))
-    end
-    install_method = []
-    if !rule_decls.custom_install
-        push!(install_method,
-              :(function Rete.install(::CanInstallRulesTrait,
-                                      root, ::$rule_name)
-                    join = JoinNode($rule_name_str,
-                                    $(length(input_exprs)),
-                                    $rule_name())
-                    $(input_connections...)
-                    $(output_memories...)
-                    $(forward_triggers...)
-                    connect(join, root)
-                end))
-    end
+    prd = ParsedRuleDefinition(__source__, __module__, call, body)
     esc(quote
-        struct $rule_name <: $supertype end
-        Rete.emits(::Type{$rule_name}) = tuple($(output_types...))
-        $(install_method...)
-        function(::$rule_name)(__NODE__::JoinNode,
-                               $(arg_decls...);
-                               emit = fact -> emit(__NODE__, fact))
-            $body
-        end
-    end)
+            struct $(prd.rule_name) <: $(prd.rule_supertype) end
+            Rete.emits(::Type{$(prd.rule_name)}) = tuple($((prd.output_types)...))
+            $(compose_install_method(prd)...)
+            $(compuse_join_function(prd))
+        end)
 end
 
 #=
