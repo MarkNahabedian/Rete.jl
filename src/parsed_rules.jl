@@ -113,43 +113,26 @@ function compose_install_method(prd::ParsedRuleDefinition)
     install_method
 end
 
-function compuse_join_function(prd::ParsedRuleDefinition)
-    arg_decls = map(1:length(prd.input_exprs)) do i
+function compose_join_function(prd::ParsedRuleDefinition)
+    arg_decls = map(1 : length(prd.input_exprs)) do i
         :($(input_var(prd, i))::$(input_type(prd, i)))
     end
+    body = rewrite_rule_body(prd.body)
     :(function(::$(prd.rule_name))(__NODE__::JoinNode,
                                    $(arg_decls...);
                                    emit = fact -> emit(__NODE__, fact))
-          $(prd.body)
+          task_local_storage(:RuleRejectionLoggingParameters,
+                             (group = $(prd.rule_name),
+                              parameters = let
+                                  vars = $(map(i -> input_var(prd, i),
+                                               1 : length(prd.input_exprs)))
+                                  filter(Base.@locals) do p
+                                      p.first in vars
+                                  end
+                              end
+                              )) do
+              $body
+          end
       end)
 end
-
-
-#=
-
-using Rete
-using Rete: ParsedRuleDefinition, input_var, input_type, compose_install_method, compuse_join_function
-
-rule_str = raw"""
-@rule ThreeInputRule(a::Char, b::Int, c::Char, ::String) begin
-    if a != c
-        emit("$a$b$c")
-    end
-end
-"""
-
-rule_expr = Meta.parse(rule_str)
-
-prd = ParsedRuleDefinition(nothing, nothing, rule_expr.args[3], rule_expr.args[4])
-
-input_var(prd, 1) == :a
-input_var(prd, 2) == :b
-input_type(prd, 1) == :Char
-input_type(prd, 2) == :Int
-
-compose_install_method(prd)
-
-compuse_join_function(prd)
-
-=#
 
