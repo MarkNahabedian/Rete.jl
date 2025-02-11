@@ -14,7 +14,7 @@ Printf = "de0858da-6303-5e67-8744-51eddeeeb8d7"
 
 [compat]
 IterTools = "1"
-Logging = "1.11.0"
+Logging = "1.9.0"
 LoggingExtras = "1.1.0"
 MacroTools = "0.5"
 OrderedCollections = "1.6"
