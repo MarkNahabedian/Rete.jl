@@ -181,7 +181,7 @@ To simplify node customization, any subtype of
 
 ```
     inputs::Set{AbstractReteNode}
- ```
+```
 
 will be given the [`HasSetOfInputsTrait`](@ref) trait, and as such can
 serve as an output for other nodes without additional method support.
@@ -190,7 +190,7 @@ Any subtype of [`AbstractReteNode`](@ref) that includes the field definition
 
 ```
     outputs::Set{AbstractReteNode}
- ```
+```
 
 will be given the [`HasSetOfOutputsTrait`](@ref) trait, and as such can
 serve as an input for other nodes without additional method support.
