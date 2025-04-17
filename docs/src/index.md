@@ -241,6 +241,31 @@ function Rete.find_memory_for_type(root::MyTypeOfRootNode,
 end
 ```
 
+## Rule Debugging
+
+There is some support for diagnosing why a rule isn't concluding what
+you expect.  If the rule is defined using the [`@rule'](ref) macro and
+it uses [`@reject`](ref), [`@rejectif`](ref), oand
+[`@continueif`](ref) when rejecting its input facts, then those rule
+exits are logged at the DEBUG level.  Each LogRecord includes
+"@reject", "@rejectif" or "@continueif" as the log message, and the
+source location of the exit clause.  For `@rejectif` and `@continueif`
+the log message includes the predicate.  The `group` of the log
+message will be the name of the rule.  The log message will include a
+`parameters` keyword argument that gives the values of the rule's
+inputs.
+
+We suggest using `Logging.TestLogger` to collect the log messages in a
+way that can be programatically filtered and analyzed.  If the rule is
+failing within a unit test then the log can be written to a file using
+`Serialization.serialize` and reloaded and analyzed one the test
+completes.
+
+Note that if any of the facts being considered are mutable, the value
+that's is serialized to a file is the most recent state of the fact,
+not necessarily its state when the rule was evaluated.  It is best to
+not have mutable facts.
+
 
 ## Index
 
