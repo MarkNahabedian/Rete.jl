@@ -80,16 +80,16 @@ CUSTOM_INSTALL below.  There is no enforcement that all types that are
 emitted by the rule are listed here, but various introspective tools,
 as well as proper rule installation depend on this.
 
-The body of the `@rule` expression implements the behavior of the
-rule.  It can perform any tests that are necessary to determine which,
-if any facts should be asserted.  This code is included in a function
-that has the same name as the rule itself.  This function is used as
-the `join_function` of the [`JoinNode`](@ref) that implements the
-rule.  The function declares a keyword argument named `emit` whose
-default value calls [`emit`](@ref). For testing and debugging
-purposes, the rule function can be invoked from the Julia REPL, perhaps
-passing `emit=println` to try the rule function independent of the
-rest of the network.
+The body of the `@rule` expression is Julia code that implements the
+behavior of the rule.  It can perform any tests that are necessary to
+determine which, if any facts should be asserted.  This code is
+included in a function that has the same name as the rule itself.
+This function is used as the `join_function` of the [`JoinNode`](@ref)
+that implements the rule.  The function declares a keyword argument
+named `emit` whose default value calls [`emit`](@ref). For testing and
+debugging purposes, the rule function can be invoked from the Julia
+REPL, perhaps passing `emit=println` to try the rule function
+independent of the rest of the network.
 
 Within the body, `@reject`, `@rejectif` and `@continueif` can be used.
 
@@ -113,7 +113,7 @@ Only the inputs for the specified argument names will serve as forward
 triggers.  For backward compatibility, if there is no `RULE_DECLARATIONS`
 expression then all inputs are forward triggers.
 
-Note that if a `RULE_DECLARATIONS` clause is included then any forwarde
+Note that if a `RULE_DECLARATIONS` clause is included then any forward
 triggers must be explicitly declared.
 
 ` `CUSTOM_INSTALL()`
