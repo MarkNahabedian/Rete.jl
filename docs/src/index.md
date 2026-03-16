@@ -40,7 +40,7 @@ streams.  The function can call [`emit`](@ref) to assert a new *fact*
 to the network.
 
 
-That's the theory.  In practice, its simpler if a given node performs
+That's the theory.  In practice, it's simpler if a given node performs
 more than one of these roles.  One such example is
 [`IsaMemoryNode`](@ref), which filters *facts* that match a type
 parameter and remember only those *facts*.
@@ -244,8 +244,8 @@ end
 ## Rule Debugging
 
 There is some support for diagnosing why a rule isn't concluding what
-you expect.  If the rule is defined using the [`@rule'](ref) macro and
-it uses @reject`, `@rejectif`, and `@continueif` when rejecting its
+you expect.  If the rule is defined using the [`@rule`](@ref) macro and
+it uses `@reject`, `@rejectif`, and `@continueif` when rejecting its
 input facts, then those rule exits are logged at the DEBUG level.
 Each LogRecord includes `@reject`, `@rejectif` or `@continueif` as the
 log message, and the source location of the exit clause.  For
